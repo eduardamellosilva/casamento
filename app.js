@@ -465,6 +465,12 @@ function initConvidados() {
     });
 }
 
+function toggleMobileForm(cardId) {
+    const card = document.getElementById(cardId);
+    if (!card) return;
+    card.classList.toggle('collapsed');
+}
+
 function resetConvidadoForm() {
     document.getElementById('formConvidado').reset();
     document.getElementById('convidadoId').value = '';
@@ -477,6 +483,12 @@ function resetConvidadoForm() {
 function editConvidado(id) {
     const item = appState.convidados.find(c => c.id === id);
     if (!item) return;
+
+    const card = document.getElementById('cardFormConvidado');
+    if (card && card.classList.contains('collapsed')) {
+        card.classList.remove('collapsed');
+    }
+
     document.getElementById('convidadoId').value = item.id;
     document.getElementById('convidadoNome').value = item.nome;
     document.getElementById('convidadoOrigem').value = item.origem;

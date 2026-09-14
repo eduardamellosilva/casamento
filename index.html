@@ -274,9 +274,12 @@
 
                     <div class="section-grid">
                         <!-- Form Column -->
-                        <div class="form-card">
-                            <div class="card-header">
+                        <div class="form-card" id="cardFormConvidado">
+                            <div class="card-header flex-between cursor-pointer" onclick="toggleMobileForm('cardFormConvidado')">
                                 <h3 id="convidadoFormTitle"><i class="fa-solid fa-user-plus"></i> Novo Convidado</h3>
+                                <button type="button" class="btn-card-toggle" aria-label="Alternar visualização do formulário">
+                                    <i class="fa-solid fa-chevron-up"></i>
+                                </button>
                             </div>
                             <form id="formConvidado">
                                 <input type="hidden" id="convidadoId">
@@ -439,9 +442,12 @@
                 <section class="view-section" id="orcamentosView">
                     <div class="section-grid">
                         <!-- Form Column -->
-                        <div class="form-card">
-                            <div class="card-header">
+                        <div class="form-card" id="cardFormOrcamento">
+                            <div class="card-header flex-between cursor-pointer" onclick="toggleMobileForm('cardFormOrcamento')">
                                 <h3 id="orcamentoFormTitle"><i class="fa-solid fa-plus-circle"></i> Cadastrar Orçamento</h3>
+                                <button type="button" class="btn-card-toggle" aria-label="Alternar visualização do formulário">
+                                    <i class="fa-solid fa-chevron-up"></i>
+                                </button>
                             </div>
                             <form id="formOrcamento">
                                 <input type="hidden" id="orcamentoId">
