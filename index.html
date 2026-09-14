@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planejamento de Casamento 💍 | Gestão & Contratos</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar Backdrop for Mobile -->
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <!-- Sidebar / Menu Sanduíche Drawer -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <span class="brand-icon"><i class="fa-solid fa-heart"></i></span>
+                    <div class="brand-text">
+                        <h2>Casamento</h2>
+                        <span class="brand-subtitle">Planejamento & Contratos</span>
+                    </div>
+                </div>
+                <button class="btn-close-sidebar" id="btnCloseSidebar" aria-label="Fechar menu">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="sidebar-status-card">
+                <i class="fa-solid fa-gem status-icon"></i>
+                <div>
+                    <span class="status-label">Fase Atual</span>
+                    <strong>Planejamento & Contratos</strong>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <button class="nav-link active" data-view="dashboardView">
+                            <i class="fa-solid fa-chart-pie"></i>
+                            <span>Visão Geral</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-link" data-view="convidadosView">
+                            <i class="fa-solid fa-users"></i>
+                            <span>1. Convidados</span>
+                            <span class="badge" id="badgeConvidadosCount">0</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-link" data-view="orcamentosView">
+                            <i class="fa-solid fa-calculator"></i>
+                            <span>2. Orçamentos</span>
+                            <span class="badge badge-warning" id="badgeOrcamentosCount">0</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-link" data-view="servicosFechadosView">
+                            <i class="fa-solid fa-file-contract"></i>
+                            <span>3. Serviços Fechados</span>
+                            <span class="badge badge-success" id="badgeFechadosCount">0</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-secondary btn-block" id="btnOpenCategoryManager">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Gerenciar Categorias</span>
+                </button>
+                <p class="copyright">Desenvolvido com carinho ❤️</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Navigation Bar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="btn-hamburger" id="btnHamburger" aria-label="Abrir Menu">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <h1 class="page-title" id="pageTitle">Visão Geral do Planejamento</h1>
+                </div>
+
+                <div class="topbar-right">
+                    <div class="quick-summary-pill">
+                        <span class="pill-label">Total Fechado:</span>
+                        <strong class="pill-value" id="topbarTotalFechado">R$ 0,00</strong>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-body">
+
+                <!-- VIEW: VISÃO GERAL (DASHBOARD) -->
+                <section class="view-section active" id="dashboardView">
+                    <div class="welcome-card">
+                        <div class="welcome-text">
+                            <h2>Olá! Bem-vindo(a) ao seu Planejador 💍</h2>
+                            <p>Gerencie a lista de convidados, compare orçamentos de fornecedores e acompanhe seus contratos fechados em um só lugar.</p>
+                        </div>
+                        <div class="welcome-actions">
+                            <button class="btn-primary" onclick="switchView('convidadosView')">
+                                <i class="fa-solid fa-user-plus"></i> Add Convidados
+                            </button>
+                            <button class="btn-accent" onclick="switchView('orcamentosView')">
+                                <i class="fa-solid fa-plus"></i> Novo Orçamento
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Metrics Grid -->
+                    <div class="metrics-grid">
+                        <div class="metric-card gold">
+                            <div class="metric-icon"><i class="fa-solid fa-utensils"></i></div>
+                            <div class="metric-data">
+                                <span class="metric-title">Total Jantar Convidados</span>
+                                <h3 class="metric-value" id="dashTotalJantar">R$ 0,00</h3>
+                                <span class="metric-sub" id="dashJantarBreakdown">Noiva: R$ 0 | Noivo: R$ 0</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card purple">
+                            <div class="metric-icon"><i class="fa-solid fa-users"></i></div>
+                            <div class="metric-data">
+                                <span class="metric-title">Total de Convidados</span>
+                                <h3 class="metric-value" id="dashTotalConvidados">0 pessoas</h3>
+                                <span class="metric-sub" id="dashConvidadosBreakdown">Noiva: 0 | Noivo: 0</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card amber">
+                            <div class="metric-icon"><i class="fa-solid fa-calculator"></i></div>
+                            <div class="metric-data">
+                                <span class="metric-title">Orçamentos em Análise</span>
+                                <h3 class="metric-value" id="dashTotalOrcamentosPendentes">R$ 0,00</h3>
+                                <span class="metric-sub" id="dashOrcamentosCountSub">0 propostas cadastradas</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card emerald">
+                            <div class="metric-icon"><i class="fa-solid fa-file-signature"></i></div>
+                            <div class="metric-data">
+                                <span class="metric-title">Contratos Fechados</span>
+                                <h3 class="metric-value" id="dashTotalFechado">R$ 0,00</h3>
+                                <span class="metric-sub" id="dashFechadosCountSub">0 serviços aprovados</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Columns -->
+                    <div class="dashboard-columns">
+                        <div class="dash-column">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3><i class="fa-solid fa-clock-rotate-left"></i> Orçamentos Recentes</h3>
+                                    <button class="btn-text" onclick="switchView('orcamentosView')">Ver Todos</button>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="recent-list" id="dashRecentOrcamentos">
+                                        <!-- Dynamic items -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dash-column">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3><i class="fa-solid fa-circle-check text-success"></i> Últimos Serviços Fechados</h3>
+                                    <button class="btn-text" onclick="switchView('servicosFechadosView')">Ver Todos</button>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="recent-list" id="dashRecentFechados">
+                                        <!-- Dynamic items -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: CONVIDADOS -->
+                <section class="view-section" id="convidadosView">
+                    <div class="section-grid">
+                        <!-- Form Column -->
+                        <div class="form-card">
+                            <div class="card-header">
+                                <h3 id="convidadoFormTitle"><i class="fa-solid fa-user-plus"></i> Novo Convidado</h3>
+                            </div>
+                            <form id="formConvidado">
+                                <input type="hidden" id="convidadoId">
+                                <div class="form-group">
+                                    <label for="convidadoNome">Nome do Convidado *</label>
+                                    <div class="input-icon-wrapper">
+                                        <i class="fa-solid fa-user"></i>
+                                        <input type="text" id="convidadoNome" class="form-control" placeholder="Ex: Maria Silva" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="convidadoOrigem">Origem *</label>
+                                    <div class="input-icon-wrapper">
+                                        <i class="fa-solid fa-heart"></i>
+                                        <select id="convidadoOrigem" class="form-control" required>
+                                            <option value="Noiva">Noiva</option>
+                                            <option value="Noivo">Noivo</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="convidadoFuncao">Papel no Casamento (opcional)</label>
+                                    <div class="input-icon-wrapper">
+                                        <i class="fa-solid fa-crown"></i>
+                                        <select id="convidadoFuncao" class="form-control">
+                                            <option value="">Convidado(a) Comum</option>
+                                            <option value="Mãe da Noiva">Mãe da Noiva</option>
+                                            <option value="Pai da Noiva">Pai da Noiva</option>
+                                            <option value="Mãe do Noivo">Mãe do Noivo</option>
+                                            <option value="Pai do Noivo">Pai do Noivo</option>
+                                            <option value="Padrinho">Padrinho</option>
+                                            <option value="Madrinha">Madrinha</option>
+                                            <option value="Pajem">Pajem</option>
+                                            <option value="Daminha">Daminha</option>
+                                            <option value="Florista">Florista</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="convidadoPrecoJantar">
+                                        Preço do Jantar por Pessoa (R$) * 
+                                        <i class="fa-solid fa-circle-info tooltip-icon" title="Cadastre o valor individual do prato/buffet para este convidado"></i>
+                                    </label>
+                                    <div class="input-icon-wrapper">
+                                        <i class="fa-solid fa-brazilian-real-sign"></i>
+                                        <input type="number" id="convidadoPrecoJantar" class="form-control" placeholder="0,00" step="0.01" min="0" required>
+                                    </div>
+                                    <div class="quick-preset-buttons mt-2">
+                                        <span class="preset-label">Atalhos rápidos:</span>
+                                        <button type="button" class="preset-btn" onclick="setJantarPreset(79.90)">R$ 79,90</button>
+                                        <button type="button" class="preset-btn" onclick="setJantarPreset(39.95)">R$ 39,95</button>
+                                        <button type="button" class="preset-btn" onclick="setJantarPreset(0)">Não Paga (R$ 0)</button>
+                                    </div>
+                                    <small class="form-text">Selecione uma opção prévia acima ou digite qualquer valor desejado.</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="convidadoObservacao">Observações (opcional)</label>
+                                    <textarea id="convidadoObservacao" class="form-control" rows="2" placeholder="Ex: Restrição alimentar, criança..."></textarea>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn-primary btn-block" id="btnSalvarConvidado">
+                                        <i class="fa-solid fa-check"></i> Salvar Convidado
+                                    </button>
+                                    <button type="button" class="btn-secondary btn-block hidden" id="btnCancelarConvidado" onclick="resetConvidadoForm()">
+                                        Cancelar Edição
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Table Column -->
+                        <div class="list-card">
+                            <div class="list-header">
+                                <div class="filter-tabs">
+                                    <button class="filter-tab active" data-filter="todos" onclick="setConvidadoFilter('todos')">Todos (<span id="countFilterTodos">0</span>)</button>
+                                    <button class="filter-tab" data-filter="Noiva" onclick="setConvidadoFilter('Noiva')">Noiva (<span id="countFilterNoiva">0</span>)</button>
+                                    <button class="filter-tab" data-filter="Noivo" onclick="setConvidadoFilter('Noivo')">Noivo (<span id="countFilterNoivo">0</span>)</button>
+                                </div>
+
+                                <div class="search-box">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="text" id="searchConvidado" placeholder="Buscar por nome, papel..." oninput="renderConvidadosTable()">
+                                </div>
+                            </div>
+
+                            <!-- Summary Pill Row -->
+                            <div class="convidados-summary-bar">
+                                <div class="summary-item">
+                                    <span>Total Pessoas:</span>
+                                    <strong id="summaryTotalPessoas">0</strong>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Jantar Noiva:</span>
+                                    <strong id="summaryJantarNoiva">R$ 0,00</strong>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Jantar Noivo:</span>
+                                    <strong id="summaryJantarNoivo">R$ 0,00</strong>
+                                </div>
+                                <div class="summary-item highlight">
+                                    <span>Custo Total Jantar:</span>
+                                    <strong id="summaryJantarTotal">R$ 0,00</strong>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="custom-table" id="tableConvidados">
+                                    <thead>
+                                        <tr id="thRowConvidados">
+                                            <th class="sortable" data-sort-key="nome" onclick="toggleConvidadoSort('nome')">Nome <i class="fa-solid fa-sort sort-icon"></i></th>
+                                            <th class="sortable" data-sort-key="origem" onclick="toggleConvidadoSort('origem')">Origem <i class="fa-solid fa-sort sort-icon"></i></th>
+                                            <th class="sortable" data-sort-key="funcao" onclick="toggleConvidadoSort('funcao')">Papel / Função <i class="fa-solid fa-sort sort-icon"></i></th>
+                                            <th class="sortable" data-sort-key="precoJantar" onclick="toggleConvidadoSort('precoJantar')">Valor Jantar (R$) <i class="fa-solid fa-sort sort-icon"></i></th>
+                                            <th class="sortable" data-sort-key="observacao" onclick="toggleConvidadoSort('observacao')">Observação <i class="fa-solid fa-sort sort-icon"></i></th>
+                                            <th class="text-right">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyConvidados">
+                                        <!-- Rendered via JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: ORÇAMENTOS -->
+                <section class="view-section" id="orcamentosView">
+                    <div class="section-grid">
+                        <!-- Form Column -->
+                        <div class="form-card">
+                            <div class="card-header">
+                                <h3 id="orcamentoFormTitle"><i class="fa-solid fa-plus-circle"></i> Cadastrar Orçamento</h3>
+                            </div>
+                            <form id="formOrcamento">
+                                <input type="hidden" id="orcamentoId">
+                                
+                                <div class="form-group">
+                                    <label for="orcamentoNome">Nome do Fornecedor / Empresa *</label>
+                                    <div class="input-icon-wrapper">
+                                        <i class="fa-solid fa-store"></i>
+                                        <input type="text" id="orcamentoNome" class="form-control" placeholder="Ex: Studio Foto & Arte" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="label-with-action">
+                                        <label for="orcamentoServico">Serviço / Categoria *</label>
+                                        <button type="button" class="btn-link" id="btnQuickAddCategory">
+                                            <i class="fa-solid fa-plus-square"></i> Nova Categoria
+                                        </button>
+                                    </div>
+                                    <div class="input-icon-wrapper">
+                                        <i class="fa-solid fa-list-check"></i>
+                                        <select id="orcamentoServico" class="form-control" required>
+                                            <!-- Dynamically populated from categories state -->
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="orcamentoValor">Valor do Orçamento (R$) *</label>
+                                    <div class="input-icon-wrapper">
+                                        <i class="fa-solid fa-brazilian-real-sign"></i>
+                                        <input type="number" id="orcamentoValor" class="form-control" placeholder="0,00" step="0.01" min="0" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="orcamentoObservacao">Observações (opcional)</label>
+                                    <textarea id="orcamentoObservacao" class="form-control" rows="3" placeholder="Detalhes do pacote, parcelamento, itens inclusos..."></textarea>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn-accent btn-block" id="btnSalvarOrcamento">
+                                        <i class="fa-solid fa-save"></i> Salvar Orçamento
+                                    </button>
+                                    <button type="button" class="btn-secondary btn-block hidden" id="btnCancelarOrcamento" onclick="resetOrcamentoForm()">
+                                        Cancelar Edição
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- List & Cards Column -->
+                        <div class="list-card">
+                            <div class="list-header">
+                                <div class="filter-tabs">
+                                    <button class="filter-tab active" data-filter-orc="todos" onclick="setOrcamentoFilter('todos')">Todos</button>
+                                    <button class="filter-tab" data-filter-orc="pendentes" onclick="setOrcamentoFilter('pendentes')">Em Análise</button>
+                                    <button class="filter-tab" data-filter-orc="aprovados" onclick="setOrcamentoFilter('aprovados')">Aprovados</button>
+                                </div>
+
+                                <div class="search-box">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="text" id="searchOrcamento" placeholder="Buscar orçamento ou fornecedor..." oninput="renderOrcamentosTable()">
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="custom-table" id="tableOrcamentos">
+                                    <thead>
+                                        <tr id="thRowOrcamentos">
+                                            <th class="sortable" data-sort-key="nome" onclick="toggleOrcamentoSort('nome')">Fornecedor / Nome <i class="fa-solid fa-sort sort-icon"></i></th>
+                                            <th class="sortable" data-sort-key="servico" onclick="toggleOrcamentoSort('servico')">Serviço <i class="fa-solid fa-sort sort-icon"></i></th>
+                                            <th class="sortable" data-sort-key="valor" onclick="toggleOrcamentoSort('valor')">Valor (R$) <i class="fa-solid fa-sort sort-icon"></i></th>
+                                            <th class="sortable" data-sort-key="observacao" onclick="toggleOrcamentoSort('observacao')">Observação <i class="fa-solid fa-sort sort-icon"></i></th>
+                                            <th class="sortable" data-sort-key="aprovado" onclick="toggleOrcamentoSort('aprovado')">Status <i class="fa-solid fa-sort sort-icon"></i></th>
+                                            <th class="text-right">Aprovação / Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyOrcamentos">
+                                        <!-- Rendered via JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: SERVIÇOS FECHADOS -->
+                <section class="view-section" id="servicosFechadosView">
+                    <div class="fechados-banner">
+                        <div class="fechados-info">
+                            <h2><i class="fa-solid fa-file-signature"></i> Contratos & Serviços Fechados</h2>
+                            <p>Aqui você acompanha todos os orçamentos aprovados e serviços contratados para o casamento.</p>
+                        </div>
+                        <div class="fechados-total-card">
+                            <span>Investimento Total Contratado:</span>
+                            <h2 id="totalInvestimentoFechado">R$ 0,00</h2>
+                        </div>
+                    </div>
+
+                    <div class="table-card mt-4">
+                        <div class="list-header">
+                            <h3><i class="fa-solid fa-clipboard-check"></i> Lista de Contratos Firmados</h3>
+                            <div class="search-box">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="searchFechado" placeholder="Buscar em contratados..." oninput="renderFechadosTable()">
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="custom-table" id="tableFechados">
+                                <thead>
+                                    <tr id="thRowFechados">
+                                        <th class="sortable" data-sort-key="servico" onclick="toggleFechadoSort('servico')">Serviço / Categoria <i class="fa-solid fa-sort sort-icon"></i></th>
+                                        <th class="sortable" data-sort-key="nome" onclick="toggleFechadoSort('nome')">Fornecedor <i class="fa-solid fa-sort sort-icon"></i></th>
+                                        <th class="sortable" data-sort-key="valor" onclick="toggleFechadoSort('valor')">Valor Contratado (R$) <i class="fa-solid fa-sort sort-icon"></i></th>
+                                        <th class="sortable" data-sort-key="observacao" onclick="toggleFechadoSort('observacao')">Observações <i class="fa-solid fa-sort sort-icon"></i></th>
+                                        <th class="sortable" data-sort-key="dataAprovacao" onclick="toggleFechadoSort('dataAprovacao')">Data da Aprovação <i class="fa-solid fa-sort sort-icon"></i></th>
+                                        <th class="text-right">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyFechados">
+                                    <!-- Rendered via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: GERENCIADOR DE CATEGORIAS DE SERVIÇOS -->
+    <div class="modal-overlay" id="modalCategoryManager">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-sliders"></i> Gerenciar Categorias de Serviço</h3>
+                <button class="btn-close-modal" id="btnCloseCategoryModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formAddCategory" class="form-inline mb-4">
+                    <div class="input-icon-wrapper flex-1">
+                        <i class="fa-solid fa-tag"></i>
+                        <input type="text" id="newCategoryInput" class="form-control" placeholder="Nova categoria (ex: Banda, Doces Finos...)" required>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fa-solid fa-plus"></i> Adicionar
+                    </button>
+                </form>
+
+                <h4>Categorias Cadastradas:</h4>
+                <ul class="category-list" id="categoryList">
+                    <!-- Populated via JS -->
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="btnCloseCategoryModalFooter">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Realtime Database SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
