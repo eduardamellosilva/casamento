@@ -82,10 +82,20 @@ async function dbSaveCategories(categories) {
     }
 }
 
+// Save Valor Guardado to Cloud
+async function dbSaveValorGuardado(valor) {
+    if (!isFirebaseConnected || !rtdb) return;
+    try {
+        await rtdb.ref('config/valorGuardado').set(valor);
+    } catch (e) {
+        console.error('Erro ao salvar Valor Guardado no Realtime Database:', e);
+    }
+}
+
 /* ==========================================================================
    Real-Time Data Listeners
    ========================================================================== */
-function setupRealtimeListeners(onConvidadosChange, onOrcamentosChange, onCategoriesChange) {
+function setupRealtimeListeners(onConvidadosChange, onOrcamentosChange, onCategoriesChange, onValorGuardadoChange) {
     if (!isFirebaseConnected || !rtdb) return;
 
     // 1. Convidados Real-time listener
@@ -109,4 +119,13 @@ function setupRealtimeListeners(onConvidadosChange, onOrcamentosChange, onCatego
             if (onCategoriesChange) onCategoriesChange(val);
         }
     }, err => console.error('Erro listener categorias:', err));
+
+    // 4. Valor Guardado Real-time listener
+    rtdb.ref('config/valorGuardado').on('value', (snapshot) => {
+        const val = snapshot.val();
+        if (onValorGuardadoChange && val !== null && val !== undefined) {
+            onValorGuardadoChange(val);
+        }
+    }, err => console.error('Erro listener valor guardado:', err));
 }
+

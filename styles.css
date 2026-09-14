@@ -57,6 +57,26 @@
     box-sizing: border-box;
 }
 
+.hidden {
+    display: none !important;
+}
+
+.p-4 { padding: 1rem !important; }
+.p-0 { padding: 0 !important; }
+.mt-1 { margin-top: 0.25rem !important; }
+.mt-2 { margin-top: 0.5rem !important; }
+.mt-4 { margin-top: 1rem !important; }
+.mb-1 { margin-bottom: 0.25rem !important; }
+.mb-2 { margin-bottom: 0.5rem !important; }
+.mb-4 { margin-bottom: 1rem !important; }
+.text-center { text-align: center !important; }
+.text-right { text-align: right !important; }
+.text-muted { color: var(--neutral-500) !important; }
+.text-success { color: var(--success) !important; }
+.text-danger { color: var(--danger) !important; }
+.text-primary { color: var(--primary-dark) !important; }
+.flex-1 { flex: 1 !important; }
+
 body {
     font-family: var(--font-body);
     background-color: var(--neutral-100);
@@ -486,6 +506,10 @@ h1, h2, h3, h4 {
 .metric-card.purple .metric-icon { background: var(--accent-light); color: var(--accent); }
 .metric-card.amber .metric-icon { background: var(--warning-bg); color: var(--warning); }
 .metric-card.emerald .metric-icon { background: var(--success-bg); color: var(--success); }
+.metric-card.teal .metric-icon { background: #E6FFFA; color: #0D9488; }
+.metric-card.indigo .metric-icon { background: #E0E7FF; color: #4338CA; }
+.metric-card.ruby .metric-icon { background: var(--danger-bg); color: var(--danger); }
+.metric-card.ruby .metric-value { color: var(--danger); }
 
 .metric-data {
     display: flex;
@@ -1417,3 +1441,367 @@ textarea.form-control {
         width: 100%;
     }
 }
+
+/* ==========================================================================
+   Savings Card & Payment Enhancements
+   ========================================================================== */
+.savings-card {
+    background: linear-gradient(135deg, #0F766E 0%, #0D9488 100%);
+    color: var(--white);
+    padding: 24px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+}
+
+.savings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.savings-title {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.savings-icon {
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.savings-title h3 {
+    color: var(--white);
+    font-size: 1.25rem;
+    line-height: 1.2;
+}
+
+.savings-title p {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.85rem;
+}
+
+.savings-form {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.savings-form .form-control {
+    background: var(--white);
+    color: var(--neutral-900);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.quick-summary-pill.pill-teal {
+    background: #E6FFFA;
+    border-color: #B2F5EA;
+}
+.quick-summary-pill.pill-teal .pill-value {
+    color: #0D9488;
+}
+
+.quick-summary-pill.pill-indigo {
+    background: #E0E7FF;
+    border-color: #C7D2FE;
+}
+.quick-summary-pill.pill-indigo .pill-value {
+    color: #4338CA;
+}
+
+.fechados-totals-grid {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.fechados-total-card.card-pago {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.fechados-total-card.card-falta {
+    background: rgba(255, 235, 238, 0.25);
+    border-color: rgba(255, 205, 210, 0.4);
+}
+
+.badge-quitado {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--success-bg);
+    color: var(--success);
+    border: 1px solid rgba(46, 125, 50, 0.3);
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.btn-pay {
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid var(--primary);
+    background: var(--primary-bg);
+    color: var(--primary-dark);
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-pay:hover {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.payment-summary-box {
+    background: var(--neutral-100);
+    border: 1px solid var(--neutral-300);
+    padding: 16px;
+    border-radius: var(--radius-md);
+}
+
+.payment-values-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    font-size: 0.85rem;
+}
+
+.payment-values-grid span {
+    display: block;
+    color: var(--neutral-600);
+    font-size: 0.75rem;
+}
+
+/* ==========================================================================
+   View Mode Switchers & Interactive Cards Grid System
+   ========================================================================== */
+.list-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.view-toggle-btns {
+    display: flex;
+    background: var(--neutral-200);
+    padding: 3px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--neutral-300);
+}
+
+.view-toggle-btn {
+    background: none;
+    border: none;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--neutral-600);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.view-toggle-btn:hover {
+    color: var(--neutral-900);
+}
+
+.view-toggle-btn.active {
+    background: var(--primary);
+    color: var(--white);
+    box-shadow: var(--shadow-sm);
+    font-weight: 700;
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.item-card {
+    background: var(--white);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+}
+
+.item-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-light);
+}
+
+.item-card.approved-card {
+    border-left: 4px solid var(--success);
+}
+
+.item-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.item-card-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.avatar-circle.Noiva {
+    background: var(--rose-gold-light);
+    color: #9E563B;
+    border: 1px solid var(--rose-gold);
+}
+
+.avatar-circle.Noivo {
+    background: var(--accent-light);
+    color: var(--accent);
+    border: 1px solid rgba(107, 78, 113, 0.3);
+}
+
+.item-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--neutral-900);
+    line-height: 1.2;
+}
+
+.item-card-body {
+    flex: 1;
+    margin-bottom: 12px;
+}
+
+.card-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-top: 1px dashed var(--neutral-200);
+}
+
+.card-price-container {
+    background: var(--primary-bg);
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(184, 134, 11, 0.2);
+}
+
+.card-price-val {
+    color: var(--primary-dark);
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.card-obs {
+    font-size: 0.82rem;
+    color: var(--neutral-600);
+    background: var(--neutral-100);
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    margin-top: 8px;
+}
+
+.card-financial-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    background: var(--neutral-100);
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--neutral-200);
+    text-align: center;
+}
+
+.fin-box span {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--neutral-600);
+    text-transform: uppercase;
+}
+
+.fin-box strong {
+    font-size: 0.85rem;
+}
+
+.card-progress-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-progress-bar {
+    flex: 1;
+    height: 8px;
+    background: var(--neutral-200);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.card-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--success) 100%);
+    border-radius: var(--radius-full);
+    transition: width 0.4s ease;
+}
+
+.progress-percent-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--neutral-700);
+    min-width: 55px;
+    text-align: right;
+}
+
+.card-date-badge {
+    font-size: 0.75rem;
+    color: var(--neutral-500);
+    display: inline-block;
+}
+
+.item-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--neutral-200);
+}
+
+

@@ -35,6 +35,7 @@ const defaultOrcamentos = [
         valor: 4800.00,
         possuiEntrada: true,
         valorEntrada: 1000.00,
+        valorPago: 1000.00,
         observacao: 'Inclui pré-wedding + álbum 30x30 cm + 2 fotógrafos no dia',
         aprovado: true,
         dataAprovacao: '2026-09-10'
@@ -46,6 +47,7 @@ const defaultOrcamentos = [
         valor: 5200.00,
         possuiEntrada: false,
         valorEntrada: 0,
+        valorPago: 0,
         observacao: 'Teaser 1 min + filme completo 20 min + drone',
         aprovado: false,
         dataAprovacao: null
@@ -57,6 +59,7 @@ const defaultOrcamentos = [
         valor: 14500.00,
         possuiEntrada: true,
         valorEntrada: 3000.00,
+        valorPago: 3000.00,
         observacao: 'Espaço com ar condicionado, gerador e camarim da noiva inclusos',
         aprovado: true,
         dataAprovacao: '2026-09-12'
@@ -68,6 +71,7 @@ const defaultOrcamentos = [
         valor: 3200.00,
         possuiEntrada: false,
         valorEntrada: 0,
+        valorPago: 0,
         observacao: 'Estrutura de luzes robóticas + fumaça + som completo',
         aprovado: false,
         dataAprovacao: null
@@ -76,22 +80,71 @@ const defaultOrcamentos = [
 
 // Global Application State
 let appState = {
+    valorGuardado: 0,
     categories: [...defaultCategories],
     convidados: [...defaultConvidados],
     orcamentos: [...defaultOrcamentos],
     currentView: 'dashboardView',
     convidadoFilter: 'todos',
     orcamentoFilter: 'todos',
+    convidadoViewMode: 'cards',
+    orcamentoViewMode: 'cards',
+    fechadoViewMode: 'cards',
     convidadoSort: { key: 'nome', dir: 'asc' },
     orcamentoSort: { key: 'nome', dir: 'asc' },
     fechadoSort: { key: 'servico', dir: 'asc' }
 };
 
+function setConvidadoViewMode(mode) {
+    appState.convidadoViewMode = mode;
+    const btnCards = document.getElementById('btnToggleCardsConvidados');
+    const btnTable = document.getElementById('btnToggleTableConvidados');
+    const grid = document.getElementById('cardsConvidados');
+    const table = document.getElementById('tableContainerConvidados');
+    if (btnCards) btnCards.classList.toggle('active', mode === 'cards');
+    if (btnTable) btnTable.classList.toggle('active', mode === 'table');
+    if (grid) grid.classList.toggle('hidden', mode !== 'cards');
+    if (table) table.classList.toggle('hidden', mode !== 'table');
+}
+
+function setOrcamentoViewMode(mode) {
+    appState.orcamentoViewMode = mode;
+    const btnCards = document.getElementById('btnToggleCardsOrcamentos');
+    const btnTable = document.getElementById('btnToggleTableOrcamentos');
+    const grid = document.getElementById('cardsOrcamentos');
+    const table = document.getElementById('tableContainerOrcamentos');
+    if (btnCards) btnCards.classList.toggle('active', mode === 'cards');
+    if (btnTable) btnTable.classList.toggle('active', mode === 'table');
+    if (grid) grid.classList.toggle('hidden', mode !== 'cards');
+    if (table) table.classList.toggle('hidden', mode !== 'table');
+}
+
+function setFechadoViewMode(mode) {
+    appState.fechadoViewMode = mode;
+    const btnCards = document.getElementById('btnToggleCardsFechados');
+    const btnTable = document.getElementById('btnToggleTableFechados');
+    const grid = document.getElementById('cardsFechados');
+    const table = document.getElementById('tableContainerFechados');
+    if (btnCards) btnCards.classList.toggle('active', mode === 'cards');
+    if (btnTable) btnTable.classList.toggle('active', mode === 'table');
+    if (grid) grid.classList.toggle('hidden', mode !== 'cards');
+    if (table) table.classList.toggle('hidden', mode !== 'table');
+}
+
 // Generic Sorting Helper
 function sortItems(arr, key, dir) {
     return arr.sort((a, b) => {
-        let valA = a[key] ?? '';
-        let valB = b[key] ?? '';
+        let valA, valB;
+        if (key === 'valorPago') {
+            valA = a.valorPago || 0;
+            valB = b.valorPago || 0;
+        } else if (key === 'valorFalta') {
+            valA = (a.valor || 0) - (a.valorPago || 0);
+            valB = (b.valor || 0) - (b.valorPago || 0);
+        } else {
+            valA = a[key] ?? '';
+            valB = b[key] ?? '';
+        }
 
         if (typeof valA === 'boolean') {
             valA = valA ? 1 : 0;
@@ -154,10 +207,10 @@ function toggleFechadoSort(key) {
     renderFechadosTable();
 }
 
-// Format currency helper
+// Format currency helper (3 casas decimais)
 function formatCurrency(val) {
     const num = Number(val) || 0;
-    return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 3, maximumFractionDigits: 3 });
 }
 
 // Format Date helper
@@ -178,6 +231,7 @@ function loadState() {
             appState.categories = parsed.categories && parsed.categories.length ? parsed.categories : defaultCategories;
             appState.convidados = parsed.convidados || [];
             appState.orcamentos = parsed.orcamentos || [];
+            appState.valorGuardado = parsed.valorGuardado || 0;
         }
     } catch (e) {
         console.error('Erro ao carregar do localStorage', e);
@@ -189,11 +243,25 @@ function saveState() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
             categories: appState.categories,
             convidados: appState.convidados,
-            orcamentos: appState.orcamentos
+            orcamentos: appState.orcamentos,
+            valorGuardado: appState.valorGuardado
         }));
     } catch (e) {
         console.error('Erro ao salvar no localStorage', e);
     }
+}
+
+function salvarValorGuardado() {
+    const input = document.getElementById('valorGuardadoInput');
+    if (!input) return;
+    const val = parseFloat(input.value) || 0;
+    appState.valorGuardado = val;
+    saveState();
+    if (typeof dbSaveValorGuardado === 'function') {
+        dbSaveValorGuardado(val);
+    }
+    renderDashboard();
+    alert(`Valor guardado atualizado para ${formatCurrency(val)}! 💰`);
 }
 
 /* ==========================================================================
@@ -481,6 +549,10 @@ function renderConvidadosTable() {
     document.getElementById('summaryJantarNoivo').textContent = formatCurrency(totalJantarNoivo);
     document.getElementById('summaryJantarTotal').textContent = formatCurrency(totalJantarGeral);
 
+    // Render both Table and Cards
+    renderConvidadosCards(filtered);
+    setConvidadoViewMode(appState.convidadoViewMode);
+
     if (filtered.length === 0) {
         tbody.innerHTML = `
             <tr>
@@ -512,6 +584,57 @@ function renderConvidadosTable() {
             </td>
         `;
         tbody.appendChild(tr);
+    });
+}
+
+function renderConvidadosCards(filtered) {
+    const container = document.getElementById('cardsConvidados');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state p-4 text-center">
+                <i class="fa-solid fa-users-slash" style="font-size: 32px; color: var(--neutral-400);"></i>
+                <p class="mt-2">Nenhum convidado encontrado.</p>
+            </div>
+        `;
+        return;
+    }
+
+    filtered.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'item-card convidado-item-card';
+        const badgeFuncaoClass = c.funcao ? c.funcao.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-') : 'comum';
+        const funcaoLabel = c.funcao ? c.funcao : 'Convidado(a)';
+        const initials = c.nome.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
+
+        card.innerHTML = `
+            <div class="item-card-header">
+                <div class="item-card-user">
+                    <div class="avatar-circle ${c.origem}">${initials}</div>
+                    <div>
+                        <h4 class="item-card-title">${c.nome}</h4>
+                        <span class="badge-origem ${c.origem}">${c.origem}</span>
+                    </div>
+                </div>
+                <span class="badge-funcao ${badgeFuncaoClass}"><i class="fa-solid fa-crown" style="font-size: 10px;"></i> ${funcaoLabel}</span>
+            </div>
+            <div class="item-card-body">
+                <div class="card-detail-row">
+                    <span class="detail-label">Preço Jantar:</span>
+                    <strong class="detail-value text-primary">${formatCurrency(c.precoJantar)}</strong>
+                </div>
+                ${c.observacao ? `<div class="card-obs"><i class="fa-solid fa-comment-dots"></i> ${c.observacao}</div>` : ''}
+            </div>
+            <div class="item-card-footer">
+                <div class="action-btns">
+                    <button class="btn-icon edit" onclick="editConvidado('${c.id}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn-icon delete" onclick="deleteConvidado('${c.id}')" title="Excluir"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
     });
 }
 
@@ -679,6 +802,10 @@ function renderOrcamentosTable() {
     updateSortIcons('thRowOrcamentos', appState.orcamentoSort.key, appState.orcamentoSort.dir);
     sortItems(filtered, appState.orcamentoSort.key, appState.orcamentoSort.dir);
 
+    // Render both Table and Cards
+    renderOrcamentosCards(filtered);
+    setOrcamentoViewMode(appState.orcamentoViewMode);
+
     if (filtered.length === 0) {
         tbody.innerHTML = `
             <tr>
@@ -723,9 +850,117 @@ function renderOrcamentosTable() {
     });
 }
 
+function renderOrcamentosCards(filtered) {
+    const container = document.getElementById('cardsOrcamentos');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state p-4 text-center">
+                <i class="fa-solid fa-calculator" style="font-size: 32px; color: var(--neutral-400);"></i>
+                <p class="mt-2">Nenhum orçamento cadastrado ou encontrado.</p>
+            </div>
+        `;
+        return;
+    }
+
+    filtered.forEach(o => {
+        const card = document.createElement('div');
+        card.className = `item-card orcamento-item-card ${o.aprovado ? 'approved-card' : ''}`;
+        const entradaBadgeHtml = (o.possuiEntrada && o.valorEntrada > 0)
+            ? `<span class="badge-entrada mt-1"><i class="fa-solid fa-hand-holding-dollar"></i> Sinal: ${formatCurrency(o.valorEntrada)}</span>`
+            : '';
+
+        card.innerHTML = `
+            <div class="item-card-header">
+                <div>
+                    <span class="badge-origem Noivo mb-1">${o.servico}</span>
+                    <h4 class="item-card-title">${o.nome}</h4>
+                </div>
+                <span class="badge-status ${o.aprovado ? 'aprovado' : 'pendente'}">
+                    <i class="fa-solid ${o.aprovado ? 'fa-check' : 'fa-clock'}"></i>
+                    ${o.aprovado ? 'Contratado' : 'Em Análise'}
+                </span>
+            </div>
+            <div class="item-card-body">
+                <div class="card-price-container">
+                    <span class="detail-label">Valor Total Orçamento:</span>
+                    <h3 class="card-price-val">${formatCurrency(o.valor)}</h3>
+                    ${entradaBadgeHtml}
+                </div>
+                ${o.observacao ? `<div class="card-obs mt-2"><i class="fa-solid fa-file-text"></i> ${o.observacao}</div>` : ''}
+            </div>
+            <div class="item-card-footer">
+                <button class="btn-approve ${o.aprovado ? 'approved' : ''}" onclick="toggleAprovarOrcamento('${o.id}')">
+                    <i class="fa-solid ${o.aprovado ? 'fa-circle-check' : 'fa-check'}"></i>
+                    ${o.aprovado ? 'Contratado' : 'Aprovar'}
+                </button>
+                <div class="action-btns">
+                    <button class="btn-icon edit" onclick="editOrcamento('${o.id}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn-icon delete" onclick="deleteOrcamento('${o.id}')" title="Excluir"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
 /* ==========================================================================
-   SERVIÇOS FECHADOS MODULE
+   SERVIÇOS FECHADOS & REGISTRO DE PAGAMENTOS
    ========================================================================== */
+function initPagamentoModal() {
+    const modal = document.getElementById('modalPagamento');
+    const btnClose = document.getElementById('btnClosePagamentoModal');
+    const btnCloseFooter = document.getElementById('btnClosePagamentoModalFooter');
+
+    if (!modal) return;
+    function closeModal() { modal.classList.remove('active'); }
+
+    if (btnClose) btnClose.addEventListener('click', closeModal);
+    if (btnCloseFooter) btnCloseFooter.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+}
+
+function openPagamentoModal(id) {
+    const item = appState.orcamentos.find(o => o.id === id);
+    if (!item) return;
+
+    document.getElementById('pagamentoOrcamentoId').value = item.id;
+    document.getElementById('pagamentoFornecedorNome').textContent = item.nome;
+    document.getElementById('pagamentoServicoNome').textContent = item.servico;
+
+    const valorTotal = item.valor || 0;
+    const valorPago = item.valorPago || 0;
+    const falta = valorTotal - valorPago;
+
+    document.getElementById('pagamentoValorContratado').textContent = formatCurrency(valorTotal);
+    document.getElementById('pagamentoAtualPago').textContent = formatCurrency(valorPago);
+    document.getElementById('pagamentoSaldoRestante').textContent = formatCurrency(falta > 0 ? falta : 0);
+    document.getElementById('pagamentoValorInput').value = valorPago || '';
+
+    document.getElementById('modalPagamento').classList.add('active');
+}
+
+function salvarPagamento(e) {
+    e.preventDefault();
+    const id = document.getElementById('pagamentoOrcamentoId').value;
+    const item = appState.orcamentos.find(o => o.id === id);
+    if (!item) return;
+
+    const novoPago = parseFloat(document.getElementById('pagamentoValorInput').value) || 0;
+    item.valorPago = novoPago;
+
+    saveState();
+    if (typeof dbSaveOrcamento === 'function') dbSaveOrcamento(item);
+
+    document.getElementById('modalPagamento').classList.remove('active');
+    renderFechadosTable();
+    renderDashboard();
+}
+
 function renderFechadosTable() {
     const tbody = document.getElementById('tbodyFechados');
     const search = document.getElementById('searchFechado').value.toLowerCase();
@@ -733,9 +968,14 @@ function renderFechadosTable() {
 
     const fechados = appState.orcamentos.filter(o => o.aprovado);
 
-    // Sum Total Contracted Investment
+    // Sum Total Investment & Payments
     const totalFechado = fechados.reduce((acc, o) => acc + o.valor, 0);
+    const totalPagoFechado = fechados.reduce((acc, o) => acc + (o.valorPago || 0), 0);
+    const totalFaltaPagar = totalFechado - totalPagoFechado;
+
     document.getElementById('totalInvestimentoFechado').textContent = formatCurrency(totalFechado);
+    document.getElementById('totalPagoFechado').textContent = formatCurrency(totalPagoFechado);
+    document.getElementById('totalFaltaPagarFechado').textContent = formatCurrency(totalFaltaPagar > 0 ? totalFaltaPagar : 0);
     document.getElementById('topbarTotalFechado').textContent = formatCurrency(totalFechado);
 
     let filtered = fechados.filter(o =>
@@ -748,12 +988,16 @@ function renderFechadosTable() {
     updateSortIcons('thRowFechados', appState.fechadoSort.key, appState.fechadoSort.dir);
     sortItems(filtered, appState.fechadoSort.key, appState.fechadoSort.dir);
 
+    // Render both Table and Cards
+    renderFechadosCards(filtered);
+    setFechadoViewMode(appState.fechadoViewMode);
+
     if (filtered.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="6" class="empty-state">
+                <td colspan="8" class="empty-state">
                     <i class="fa-solid fa-file-contract"></i>
-                    <p>Nenhum serviço ou contrato fechado até o momento. Aprova um orçamento na aba "Orçamentos"!</p>
+                    <p>Nenhum serviço ou contrato fechado até o momento. Aprove um orçamento na aba "Orçamentos"!</p>
                 </td>
             </tr>
         `;
@@ -766,16 +1010,28 @@ function renderFechadosTable() {
             ? `<br><span class="badge-entrada"><i class="fa-solid fa-hand-holding-dollar"></i> Sinal: ${formatCurrency(o.valorEntrada)}</span>`
             : '';
 
+        const valorPago = o.valorPago || 0;
+        const faltaPagar = o.valor - valorPago;
+
+        const faltaPagarHtml = faltaPagar <= 0
+            ? `<span class="badge-quitado"><i class="fa-solid fa-check-double"></i> Quitado</span>`
+            : `<strong class="text-danger">${formatCurrency(faltaPagar)}</strong>`;
+
         tr.innerHTML = `
             <td><span class="badge-origem Noivo">${o.servico}</span></td>
             <td><strong>${o.nome}</strong></td>
-            <td><strong class="text-success">${formatCurrency(o.valor)}</strong>${entradaBadgeHtml}</td>
+            <td><strong>${formatCurrency(o.valor)}</strong>${entradaBadgeHtml}</td>
+            <td><strong class="text-success">${formatCurrency(valorPago)}</strong></td>
+            <td>${faltaPagarHtml}</td>
             <td>${o.observacao || '<span class="text-muted">-</span>'}</td>
             <td>${formatDate(o.dataAprovacao)}</td>
             <td class="text-right">
                 <div class="action-btns">
-                    <button class="btn-secondary" onclick="toggleAprovarOrcamento('${o.id}')" title="Reverter aprovação para orçamento">
-                        <i class="fa-solid fa-rotate-left"></i> Reverter
+                    <button class="btn-pay" onclick="openPagamentoModal('${o.id}')" title="Informar quanto foi pago">
+                        <i class="fa-solid fa-hand-holding-dollar"></i> Pagamento
+                    </button>
+                    <button class="btn-icon delete" onclick="toggleAprovarOrcamento('${o.id}')" title="Reverter aprovação para orçamento">
+                        <i class="fa-solid fa-rotate-left"></i>
                     </button>
                 </div>
             </td>
@@ -784,10 +1040,98 @@ function renderFechadosTable() {
     });
 }
 
+function renderFechadosCards(filtered) {
+    const container = document.getElementById('cardsFechados');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state p-4 text-center">
+                <i class="fa-solid fa-file-contract" style="font-size: 32px; color: var(--neutral-400);"></i>
+                <p class="mt-2">Nenhum contrato fechado até o momento.</p>
+            </div>
+        `;
+        return;
+    }
+
+    filtered.forEach(o => {
+        const card = document.createElement('div');
+        card.className = 'item-card fechado-item-card';
+
+        const valorTotal = o.valor || 0;
+        const valorPago = o.valorPago || 0;
+        const faltaPagar = valorTotal - valorPago;
+        const percentPago = valorTotal > 0 ? Math.min(100, Math.round((valorPago / valorTotal) * 100)) : 0;
+
+        const entradaBadgeHtml = (o.possuiEntrada && o.valorEntrada > 0)
+            ? `<span class="badge-entrada"><i class="fa-solid fa-hand-holding-dollar"></i> Sinal: ${formatCurrency(o.valorEntrada)}</span>`
+            : '';
+
+        const faltaPagarHtml = faltaPagar <= 0
+            ? `<span class="badge-quitado"><i class="fa-solid fa-check-double"></i> Quitado</span>`
+            : `<strong class="text-danger">${formatCurrency(faltaPagar)}</strong>`;
+
+        card.innerHTML = `
+            <div class="item-card-header">
+                <div>
+                    <span class="badge-origem Noivo mb-1">${o.servico}</span>
+                    <h4 class="item-card-title">${o.nome}</h4>
+                </div>
+                <div class="text-right">
+                    <span class="card-date-badge"><i class="fa-solid fa-calendar-check"></i> ${formatDate(o.dataAprovacao)}</span>
+                </div>
+            </div>
+            <div class="item-card-body">
+                <div class="card-financial-grid mb-2">
+                    <div class="fin-box">
+                        <span>Contratado:</span>
+                        <strong>${formatCurrency(valorTotal)}</strong>
+                    </div>
+                    <div class="fin-box success">
+                        <span>Já Pago:</span>
+                        <strong class="text-success">${formatCurrency(valorPago)}</strong>
+                    </div>
+                    <div class="fin-box danger">
+                        <span>Falta Pagar:</span>
+                        ${faltaPagarHtml}
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="card-progress-wrapper mb-2">
+                    <div class="card-progress-bar">
+                        <div class="card-progress-fill" style="width: ${percentPago}%;"></div>
+                    </div>
+                    <span class="progress-percent-label">${percentPago}% pago</span>
+                </div>
+
+                ${entradaBadgeHtml ? `<div class="mb-2">${entradaBadgeHtml}</div>` : ''}
+                ${o.observacao ? `<div class="card-obs"><i class="fa-solid fa-file-text"></i> ${o.observacao}</div>` : ''}
+            </div>
+            <div class="item-card-footer">
+                <button class="btn-pay flex-1" onclick="openPagamentoModal('${o.id}')" title="Informar quanto foi pago">
+                    <i class="fa-solid fa-hand-holding-dollar"></i> Informar Pagamento
+                </button>
+                <button class="btn-icon delete" onclick="toggleAprovarOrcamento('${o.id}')" title="Reverter aprovação">
+                    <i class="fa-solid fa-rotate-left"></i>
+                </button>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
 /* ==========================================================================
    DASHBOARD VISÃO GERAL MODULE
    ========================================================================== */
 function renderDashboard() {
+    // Sincronizar Input Valor Guardado se não estiver em foco
+    const valGuardadoInput = document.getElementById('valorGuardadoInput');
+    if (valGuardadoInput && document.activeElement !== valGuardadoInput) {
+        valGuardadoInput.value = appState.valorGuardado || '';
+    }
+
     // Badges Sidebar
     document.getElementById('badgeConvidadosCount').textContent = appState.convidados.length;
     
@@ -821,7 +1165,30 @@ function renderDashboard() {
     document.getElementById('dashTotalFechado').textContent = formatCurrency(fechadosVal);
     document.getElementById('dashFechadosCountSub').textContent = `${fechadosCount} contratos aprovados`;
 
+    // Valor Guardado & Saldo Restante
+    const valorGuardado = appState.valorGuardado || 0;
+    const totalComprometido = fechadosVal + totalJantarGeral;
+    const saldoDisponivel = valorGuardado - totalComprometido;
+
+    document.getElementById('dashValorGuardado').textContent = formatCurrency(valorGuardado);
+    document.getElementById('dashSaldoDisponivel').textContent = formatCurrency(saldoDisponivel);
+
+    const cardSaldo = document.getElementById('cardDashSaldoDisponivel');
+    const dashSaldoSub = document.getElementById('dashSaldoSub');
+    if (cardSaldo) {
+        if (saldoDisponivel >= 0) {
+            cardSaldo.className = 'metric-card indigo';
+            if (dashSaldoSub) dashSaldoSub.textContent = `Saldo positivo para novos contratos`;
+        } else {
+            cardSaldo.className = 'metric-card ruby';
+            if (dashSaldoSub) dashSaldoSub.textContent = `Orçamento excedido em ${formatCurrency(Math.abs(saldoDisponivel))}`;
+        }
+    }
+
+    // Topbar Quick Summary
     document.getElementById('topbarTotalFechado').textContent = formatCurrency(fechadosVal);
+    document.getElementById('topbarValorGuardado').textContent = formatCurrency(valorGuardado);
+    document.getElementById('topbarSaldoDisponivel').textContent = formatCurrency(saldoDisponivel);
 
     // Recent Lists on Dashboard
     const recentOrcContainer = document.getElementById('dashRecentOrcamentos');
@@ -856,7 +1223,7 @@ function renderDashboard() {
             div.innerHTML = `
                 <div class="recent-item-info">
                     <strong>${o.nome}</strong>
-                    <span>${o.servico} &bull; Approved</span>
+                    <span>${o.servico} &bull; Aprovado</span>
                 </div>
                 <div class="recent-item-val text-success">${formatCurrency(o.valor)}</div>
             `;
@@ -883,6 +1250,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initCategoryManager();
     initConvidados();
     initOrcamentos();
+    initPagamentoModal();
     renderAll();
 
     // Firebase Firestore Realtime Sync Initialization
@@ -913,6 +1281,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     renderAll();
                 } else if (appState.categories.length > 0) {
                     dbSaveCategories(appState.categories);
+                }
+            },
+            (cloudValorGuardado) => {
+                if (cloudValorGuardado !== null && cloudValorGuardado !== undefined) {
+                    appState.valorGuardado = cloudValorGuardado;
+                    saveState();
+                    renderAll();
+                } else if (appState.valorGuardado > 0) {
+                    dbSaveValorGuardado(appState.valorGuardado);
                 }
             }
         );

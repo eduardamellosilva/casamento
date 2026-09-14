@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=2.0">
 </head>
 <body>
     <div class="app-layout">
@@ -95,7 +95,15 @@
                 <div class="topbar-right">
                     <div class="quick-summary-pill">
                         <span class="pill-label">Total Fechado:</span>
-                        <strong class="pill-value" id="topbarTotalFechado">R$ 0,00</strong>
+                        <strong class="pill-value" id="topbarTotalFechado">R$ 0,000</strong>
+                    </div>
+                    <div class="quick-summary-pill pill-teal">
+                        <span class="pill-label">Valor Guardado:</span>
+                        <strong class="pill-value" id="topbarValorGuardado">R$ 0,000</strong>
+                    </div>
+                    <div class="quick-summary-pill pill-indigo">
+                        <span class="pill-label">Saldo Disponível:</span>
+                        <strong class="pill-value" id="topbarSaldoDisponivel">R$ 0,000</strong>
                     </div>
                 </div>
             </header>
@@ -119,14 +127,38 @@
                         </div>
                     </div>
 
+                    <!-- Card para Valor Guardado para o Casamento -->
+                    <div class="savings-card mb-4">
+                        <div class="savings-header">
+                            <div class="savings-title">
+                                <span class="savings-icon"><i class="fa-solid fa-piggy-bank"></i></span>
+                                <div>
+                                    <h3>Valor Guardado para o Casamento</h3>
+                                    <p>Informe o dinheiro total reservado em conta/investimentos para custear o casamento</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="savings-body">
+                            <div class="savings-form">
+                                <div class="input-icon-wrapper flex-1">
+                                    <i class="fa-solid fa-brazilian-real-sign"></i>
+                                    <input type="number" id="valorGuardadoInput" class="form-control" placeholder="0,000" step="0.001" min="0">
+                                </div>
+                                <button type="button" class="btn-primary" id="btnSalvarValorGuardado" onclick="salvarValorGuardado()">
+                                    <i class="fa-solid fa-floppy-disk"></i> Salvar Valor Guardado
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Metrics Grid -->
                     <div class="metrics-grid">
                         <div class="metric-card gold">
                             <div class="metric-icon"><i class="fa-solid fa-utensils"></i></div>
                             <div class="metric-data">
                                 <span class="metric-title">Total Jantar Convidados</span>
-                                <h3 class="metric-value" id="dashTotalJantar">R$ 0,00</h3>
-                                <span class="metric-sub" id="dashJantarBreakdown">Noiva: R$ 0 | Noivo: R$ 0</span>
+                                <h3 class="metric-value" id="dashTotalJantar">R$ 0,000</h3>
+                                <span class="metric-sub" id="dashJantarBreakdown">Noiva: R$ 0,000 | Noivo: R$ 0,000</span>
                             </div>
                         </div>
 
@@ -143,7 +175,7 @@
                             <div class="metric-icon"><i class="fa-solid fa-calculator"></i></div>
                             <div class="metric-data">
                                 <span class="metric-title">Orçamentos em Análise</span>
-                                <h3 class="metric-value" id="dashTotalOrcamentosPendentes">R$ 0,00</h3>
+                                <h3 class="metric-value" id="dashTotalOrcamentosPendentes">R$ 0,000</h3>
                                 <span class="metric-sub" id="dashOrcamentosCountSub">0 propostas cadastradas</span>
                             </div>
                         </div>
@@ -152,8 +184,26 @@
                             <div class="metric-icon"><i class="fa-solid fa-file-signature"></i></div>
                             <div class="metric-data">
                                 <span class="metric-title">Contratos Fechados</span>
-                                <h3 class="metric-value" id="dashTotalFechado">R$ 0,00</h3>
+                                <h3 class="metric-value" id="dashTotalFechado">R$ 0,000</h3>
                                 <span class="metric-sub" id="dashFechadosCountSub">0 serviços aprovados</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card teal">
+                            <div class="metric-icon"><i class="fa-solid fa-piggy-bank"></i></div>
+                            <div class="metric-data">
+                                <span class="metric-title">Valor Guardado</span>
+                                <h3 class="metric-value" id="dashValorGuardado">R$ 0,000</h3>
+                                <span class="metric-sub">Reserva total de fundos</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card indigo" id="cardDashSaldoDisponivel">
+                            <div class="metric-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+                            <div class="metric-data">
+                                <span class="metric-title">Saldo Restante Disponível</span>
+                                <h3 class="metric-value" id="dashSaldoDisponivel">R$ 0,000</h3>
+                                <span class="metric-sub" id="dashSaldoSub">Guardado - (Fechado + Jantar)</span>
                             </div>
                         </div>
                     </div>
@@ -245,13 +295,13 @@
                                     </label>
                                     <div class="input-icon-wrapper">
                                         <i class="fa-solid fa-brazilian-real-sign"></i>
-                                        <input type="number" id="convidadoPrecoJantar" class="form-control" placeholder="0,00" step="0.01" min="0" required>
+                                        <input type="number" id="convidadoPrecoJantar" class="form-control" placeholder="0,000" step="0.001" min="0" required>
                                     </div>
                                     <div class="quick-preset-buttons mt-2">
                                         <span class="preset-label">Atalhos rápidos:</span>
-                                        <button type="button" class="preset-btn" onclick="setJantarPreset(79.90)">R$ 79,90</button>
-                                        <button type="button" class="preset-btn" onclick="setJantarPreset(39.95)">R$ 39,95</button>
-                                        <button type="button" class="preset-btn" onclick="setJantarPreset(0)">Não Paga (R$ 0)</button>
+                                        <button type="button" class="preset-btn" onclick="setJantarPreset(79.90)">R$ 79,900</button>
+                                        <button type="button" class="preset-btn" onclick="setJantarPreset(39.95)">R$ 39,950</button>
+                                        <button type="button" class="preset-btn" onclick="setJantarPreset(0)">Não Paga (R$ 0,000)</button>
                                     </div>
                                     <small class="form-text">Selecione uma opção prévia acima ou digite qualquer valor desejado.</small>
                                 </div>
@@ -281,9 +331,15 @@
                                     <button class="filter-tab" data-filter="Noivo" onclick="setConvidadoFilter('Noivo')">Noivo (<span id="countFilterNoivo">0</span>)</button>
                                 </div>
 
-                                <div class="search-box">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                    <input type="text" id="searchConvidado" placeholder="Buscar por nome, papel..." oninput="renderConvidadosTable()">
+                                <div class="list-header-actions">
+                                    <div class="view-toggle-btns">
+                                        <button class="view-toggle-btn active" id="btnToggleCardsConvidados" onclick="setConvidadoViewMode('cards')"><i class="fa-solid fa-border-all"></i> Cards</button>
+                                        <button class="view-toggle-btn" id="btnToggleTableConvidados" onclick="setConvidadoViewMode('table')"><i class="fa-solid fa-table"></i> Tabela</button>
+                                    </div>
+                                    <div class="search-box">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                        <input type="text" id="searchConvidado" placeholder="Buscar por nome, papel..." oninput="renderConvidadosTable()">
+                                    </div>
                                 </div>
                             </div>
 
@@ -295,19 +351,25 @@
                                 </div>
                                 <div class="summary-item">
                                     <span>Jantar Noiva:</span>
-                                    <strong id="summaryJantarNoiva">R$ 0,00</strong>
+                                    <strong id="summaryJantarNoiva">R$ 0,000</strong>
                                 </div>
                                 <div class="summary-item">
                                     <span>Jantar Noivo:</span>
-                                    <strong id="summaryJantarNoivo">R$ 0,00</strong>
+                                    <strong id="summaryJantarNoivo">R$ 0,000</strong>
                                 </div>
                                 <div class="summary-item highlight">
                                     <span>Custo Total Jantar:</span>
-                                    <strong id="summaryJantarTotal">R$ 0,00</strong>
+                                    <strong id="summaryJantarTotal">R$ 0,000</strong>
                                 </div>
                             </div>
 
-                            <div class="table-responsive">
+                            <!-- Cards Grid View -->
+                            <div class="cards-grid p-4" id="cardsConvidados">
+                                <!-- Populated via JS -->
+                            </div>
+
+                            <!-- Table View -->
+                            <div class="table-responsive hidden" id="tableContainerConvidados">
                                 <table class="custom-table" id="tableConvidados">
                                     <thead>
                                         <tr id="thRowConvidados">
@@ -366,7 +428,7 @@
                                     <label for="orcamentoValor">Valor Total do Orçamento (R$) *</label>
                                     <div class="input-icon-wrapper">
                                         <i class="fa-solid fa-brazilian-real-sign"></i>
-                                        <input type="number" id="orcamentoValor" class="form-control" placeholder="0,00" step="0.01" min="0" required>
+                                        <input type="number" id="orcamentoValor" class="form-control" placeholder="0,000" step="0.001" min="0" required>
                                     </div>
                                 </div>
 
@@ -381,7 +443,7 @@
                                     <label for="orcamentoValorEntrada">Valor da Entrada / Sinal (R$)</label>
                                     <div class="input-icon-wrapper">
                                         <i class="fa-solid fa-hand-holding-dollar"></i>
-                                        <input type="number" id="orcamentoValorEntrada" class="form-control" placeholder="0,00" step="0.01" min="0">
+                                        <input type="number" id="orcamentoValorEntrada" class="form-control" placeholder="0,000" step="0.001" min="0">
                                     </div>
                                     <small class="form-text">Valor exigido pelo fornecedor para garantir a data.</small>
                                 </div>
@@ -411,13 +473,25 @@
                                     <button class="filter-tab" data-filter-orc="aprovados" onclick="setOrcamentoFilter('aprovados')">Aprovados</button>
                                 </div>
 
-                                <div class="search-box">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                    <input type="text" id="searchOrcamento" placeholder="Buscar orçamento ou fornecedor..." oninput="renderOrcamentosTable()">
+                                <div class="list-header-actions">
+                                    <div class="view-toggle-btns">
+                                        <button class="view-toggle-btn active" id="btnToggleCardsOrcamentos" onclick="setOrcamentoViewMode('cards')"><i class="fa-solid fa-border-all"></i> Cards</button>
+                                        <button class="view-toggle-btn" id="btnToggleTableOrcamentos" onclick="setOrcamentoViewMode('table')"><i class="fa-solid fa-table"></i> Tabela</button>
+                                    </div>
+                                    <div class="search-box">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                        <input type="text" id="searchOrcamento" placeholder="Buscar orçamento ou fornecedor..." oninput="renderOrcamentosTable()">
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="table-responsive">
+                            <!-- Cards Grid View -->
+                            <div class="cards-grid p-4" id="cardsOrcamentos">
+                                <!-- Populated via JS -->
+                            </div>
+
+                            <!-- Table View -->
+                            <div class="table-responsive hidden" id="tableContainerOrcamentos">
                                 <table class="custom-table" id="tableOrcamentos">
                                     <thead>
                                         <tr id="thRowOrcamentos">
@@ -443,33 +517,58 @@
                     <div class="fechados-banner">
                         <div class="fechados-info">
                             <h2><i class="fa-solid fa-file-signature"></i> Contratos & Serviços Fechados</h2>
-                            <p>Aqui você acompanha todos os orçamentos aprovados e serviços contratados para o casamento.</p>
+                            <p>Aqui você acompanha todos os orçamentos aprovados, quanto já foi pago e o quanto falta pagar.</p>
                         </div>
-                        <div class="fechados-total-card">
-                            <span>Investimento Total Contratado:</span>
-                            <h2 id="totalInvestimentoFechado">R$ 0,00</h2>
+                        <div class="fechados-totals-grid">
+                            <div class="fechados-total-card">
+                                <span>Total Contratado:</span>
+                                <h2 id="totalInvestimentoFechado">R$ 0,000</h2>
+                            </div>
+                            <div class="fechados-total-card card-pago">
+                                <span>Já Pago:</span>
+                                <h2 id="totalPagoFechado">R$ 0,000</h2>
+                            </div>
+                            <div class="fechados-total-card card-falta">
+                                <span>Falta Pagar:</span>
+                                <h2 id="totalFaltaPagarFechado">R$ 0,000</h2>
+                            </div>
                         </div>
                     </div>
 
                     <div class="table-card mt-4">
                         <div class="list-header">
                             <h3><i class="fa-solid fa-clipboard-check"></i> Lista de Contratos Firmados</h3>
-                            <div class="search-box">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                                <input type="text" id="searchFechado" placeholder="Buscar em contratados..." oninput="renderFechadosTable()">
+
+                            <div class="list-header-actions">
+                                <div class="view-toggle-btns">
+                                    <button class="view-toggle-btn active" id="btnToggleCardsFechados" onclick="setFechadoViewMode('cards')"><i class="fa-solid fa-border-all"></i> Cards</button>
+                                    <button class="view-toggle-btn" id="btnToggleTableFechados" onclick="setFechadoViewMode('table')"><i class="fa-solid fa-table"></i> Tabela</button>
+                                </div>
+                                <div class="search-box">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="text" id="searchFechado" placeholder="Buscar em contratados..." oninput="renderFechadosTable()">
+                                </div>
                             </div>
                         </div>
 
-                        <div class="table-responsive">
+                        <!-- Cards Grid View -->
+                        <div class="cards-grid p-4" id="cardsFechados">
+                            <!-- Populated via JS -->
+                        </div>
+
+                        <!-- Table View -->
+                        <div class="table-responsive hidden" id="tableContainerFechados">
                             <table class="custom-table" id="tableFechados">
                                 <thead>
                                     <tr id="thRowFechados">
                                         <th class="sortable" data-sort-key="servico" onclick="toggleFechadoSort('servico')">Serviço / Categoria <i class="fa-solid fa-sort sort-icon"></i></th>
                                         <th class="sortable" data-sort-key="nome" onclick="toggleFechadoSort('nome')">Fornecedor <i class="fa-solid fa-sort sort-icon"></i></th>
                                         <th class="sortable" data-sort-key="valor" onclick="toggleFechadoSort('valor')">Valor Contratado (R$) <i class="fa-solid fa-sort sort-icon"></i></th>
+                                        <th class="sortable" data-sort-key="valorPago" onclick="toggleFechadoSort('valorPago')">Valor Pago (R$) <i class="fa-solid fa-sort sort-icon"></i></th>
+                                        <th class="sortable" data-sort-key="valorFalta" onclick="toggleFechadoSort('valorFalta')">Falta Pagar (R$) <i class="fa-solid fa-sort sort-icon"></i></th>
                                         <th class="sortable" data-sort-key="observacao" onclick="toggleFechadoSort('observacao')">Observações <i class="fa-solid fa-sort sort-icon"></i></th>
-                                        <th class="sortable" data-sort-key="dataAprovacao" onclick="toggleFechadoSort('dataAprovacao')">Data da Aprovação <i class="fa-solid fa-sort sort-icon"></i></th>
-                                        <th class="text-right">Ações</th>
+                                        <th class="sortable" data-sort-key="dataAprovacao" onclick="toggleFechadoSort('dataAprovacao')">Data Aprovação <i class="fa-solid fa-sort sort-icon"></i></th>
+                                        <th class="text-right">Pagamento / Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbodyFechados">
@@ -513,10 +612,51 @@
         </div>
     </div>
 
+    <!-- MODAL: REGISTRAR PAGAMENTO DE SERVIÇO FECHADO -->
+    <div class="modal-overlay" id="modalPagamento">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-hand-holding-dollar"></i> Registrar Pagamento</h3>
+                <button class="btn-close-modal" id="btnClosePagamentoModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="pagamentoOrcamentoId">
+                <div class="payment-summary-box mb-4">
+                    <h4 id="pagamentoFornecedorNome">Nome do Fornecedor</h4>
+                    <p class="text-muted" id="pagamentoServicoNome">Serviço</p>
+                    <div class="payment-values-grid mt-2">
+                        <div><span>Contratado:</span> <strong id="pagamentoValorContratado">R$ 0,000</strong></div>
+                        <div><span>Atual Pago:</span> <strong id="pagamentoAtualPago" class="text-success">R$ 0,000</strong></div>
+                        <div><span>Falta Pagar:</span> <strong id="pagamentoSaldoRestante" class="text-danger">R$ 0,000</strong></div>
+                    </div>
+                </div>
+
+                <form id="formPagamento" onsubmit="salvarPagamento(event)">
+                    <div class="form-group">
+                        <label for="pagamentoValorInput">Valor Acumulado Pago até o momento (R$) *</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-brazilian-real-sign"></i>
+                            <input type="number" id="pagamentoValorInput" class="form-control" placeholder="0,000" step="0.001" min="0" required>
+                        </div>
+                        <small class="form-text">Digite o valor total já pago a este fornecedor (ex: sinal de entrada + parcelas já quitadas).</small>
+                    </div>
+                    <div class="form-actions mt-4">
+                        <button type="submit" class="btn-primary btn-block">
+                            <i class="fa-solid fa-check"></i> Salvar Pagamento
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="btnClosePagamentoModalFooter">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase Realtime Database SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-    <script src="firebase-config.js"></script>
-    <script src="app.js"></script>
+    <script src="firebase-config.js?v=2.0"></script>
+    <script src="app.js?v=2.0"></script>
 </body>
 </html>
