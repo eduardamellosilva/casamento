@@ -33,6 +33,8 @@ const defaultOrcamentos = [
         nome: 'Studio Lumina Fotografia',
         servico: 'Fotógrafo',
         valor: 4800.00,
+        possuiEntrada: true,
+        valorEntrada: 1000.00,
         observacao: 'Inclui pré-wedding + álbum 30x30 cm + 2 fotógrafos no dia',
         aprovado: true,
         dataAprovacao: '2026-09-10'
@@ -42,6 +44,8 @@ const defaultOrcamentos = [
         nome: 'CineLover Films',
         servico: 'Filmagem',
         valor: 5200.00,
+        possuiEntrada: false,
+        valorEntrada: 0,
         observacao: 'Teaser 1 min + filme completo 20 min + drone',
         aprovado: false,
         dataAprovacao: null
@@ -51,6 +55,8 @@ const defaultOrcamentos = [
         nome: 'Espaço Jardim Real',
         servico: 'Espaço',
         valor: 14500.00,
+        possuiEntrada: true,
+        valorEntrada: 3000.00,
         observacao: 'Espaço com ar condicionado, gerador e camarim da noiva inclusos',
         aprovado: true,
         dataAprovacao: '2026-09-12'
@@ -60,6 +66,8 @@ const defaultOrcamentos = [
         nome: 'DJ & Iluminação Pro',
         servico: 'DJ',
         valor: 3200.00,
+        possuiEntrada: false,
+        valorEntrada: 0,
         observacao: 'Estrutura de luzes robóticas + fumaça + som completo',
         aprovado: false,
         dataAprovacao: null
@@ -510,6 +518,19 @@ function renderConvidadosTable() {
 /* ==========================================================================
    ORÇAMENTOS & APROVAÇÃO MODULE
    ========================================================================== */
+function toggleEntradaInput() {
+    const checkbox = document.getElementById('orcamentoPossuiEntrada');
+    const group = document.getElementById('groupValorEntrada');
+    if (checkbox && group) {
+        if (checkbox.checked) {
+            group.classList.remove('hidden');
+        } else {
+            group.classList.add('hidden');
+            document.getElementById('orcamentoValorEntrada').value = '';
+        }
+    }
+}
+
 function initOrcamentos() {
     const form = document.getElementById('formOrcamento');
     form.addEventListener('submit', (e) => {
@@ -518,6 +539,8 @@ function initOrcamentos() {
         const nome = document.getElementById('orcamentoNome').value.trim();
         const servico = document.getElementById('orcamentoServico').value;
         const valor = parseFloat(document.getElementById('orcamentoValor').value) || 0;
+        const possuiEntrada = document.getElementById('orcamentoPossuiEntrada').checked;
+        const valorEntrada = possuiEntrada ? (parseFloat(document.getElementById('orcamentoValorEntrada').value) || 0) : 0;
         const observacao = document.getElementById('orcamentoObservacao').value.trim();
 
         let targetOrcamento;
@@ -528,6 +551,8 @@ function initOrcamentos() {
                 targetOrcamento.nome = nome;
                 targetOrcamento.servico = servico;
                 targetOrcamento.valor = valor;
+                targetOrcamento.possuiEntrada = possuiEntrada;
+                targetOrcamento.valorEntrada = valorEntrada;
                 targetOrcamento.observacao = observacao;
             }
         } else {
@@ -537,6 +562,8 @@ function initOrcamentos() {
                 nome,
                 servico,
                 valor,
+                possuiEntrada,
+                valorEntrada,
                 observacao,
                 aprovado: false,
                 dataAprovacao: null
@@ -556,6 +583,12 @@ function initOrcamentos() {
 function resetOrcamentoForm() {
     document.getElementById('formOrcamento').reset();
     document.getElementById('orcamentoId').value = '';
+    const checkbox = document.getElementById('orcamentoPossuiEntrada');
+    if (checkbox) checkbox.checked = false;
+    const group = document.getElementById('groupValorEntrada');
+    if (group) group.classList.add('hidden');
+    document.getElementById('orcamentoValorEntrada').value = '';
+
     document.getElementById('orcamentoFormTitle').innerHTML = '<i class="fa-solid fa-plus-circle"></i> Cadastrar Orçamento';
     document.getElementById('btnSalvarOrcamento').innerHTML = '<i class="fa-solid fa-save"></i> Salvar Orçamento';
     document.getElementById('btnCancelarOrcamento').classList.add('hidden');
@@ -568,6 +601,13 @@ function editOrcamento(id) {
     document.getElementById('orcamentoNome').value = item.nome;
     document.getElementById('orcamentoServico').value = item.servico;
     document.getElementById('orcamentoValor').value = item.valor;
+    
+    const checkbox = document.getElementById('orcamentoPossuiEntrada');
+    if (checkbox) {
+        checkbox.checked = !!item.possuiEntrada;
+        toggleEntradaInput();
+    }
+    document.getElementById('orcamentoValorEntrada').value = item.valorEntrada || '';
     document.getElementById('orcamentoObservacao').value = item.observacao || '';
 
     document.getElementById('orcamentoFormTitle').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Editar Orçamento';
@@ -653,10 +693,14 @@ function renderOrcamentosTable() {
 
     filtered.forEach(o => {
         const tr = document.createElement('tr');
+        const entradaBadgeHtml = (o.possuiEntrada && o.valorEntrada > 0)
+            ? `<br><span class="badge-entrada"><i class="fa-solid fa-hand-holding-dollar"></i> Entrada: ${formatCurrency(o.valorEntrada)}</span>`
+            : '';
+
         tr.innerHTML = `
             <td><strong>${o.nome}</strong></td>
             <td><span class="badge-origem Noivo">${o.servico}</span></td>
-            <td><strong>${formatCurrency(o.valor)}</strong></td>
+            <td><strong>${formatCurrency(o.valor)}</strong>${entradaBadgeHtml}</td>
             <td>${o.observacao || '<span class="text-muted">-</span>'}</td>
             <td>
                 <span class="badge-status ${o.aprovado ? 'aprovado' : 'pendente'}">
@@ -718,10 +762,14 @@ function renderFechadosTable() {
 
     filtered.forEach(o => {
         const tr = document.createElement('tr');
+        const entradaBadgeHtml = (o.possuiEntrada && o.valorEntrada > 0)
+            ? `<br><span class="badge-entrada"><i class="fa-solid fa-hand-holding-dollar"></i> Sinal: ${formatCurrency(o.valorEntrada)}</span>`
+            : '';
+
         tr.innerHTML = `
             <td><span class="badge-origem Noivo">${o.servico}</span></td>
             <td><strong>${o.nome}</strong></td>
-            <td><strong class="text-success">${formatCurrency(o.valor)}</strong></td>
+            <td><strong class="text-success">${formatCurrency(o.valor)}</strong>${entradaBadgeHtml}</td>
             <td>${o.observacao || '<span class="text-muted">-</span>'}</td>
             <td>${formatDate(o.dataAprovacao)}</td>
             <td class="text-right">

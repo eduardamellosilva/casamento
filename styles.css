@@ -1005,6 +1005,44 @@ textarea.form-control {
     color: var(--primary-dark);
 }
 
+/* Checkbox Group & Down Payment Styles */
+.checkbox-group {
+    background: var(--neutral-100);
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--neutral-300);
+}
+
+.checkbox-label {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.88rem !important;
+    font-weight: 600;
+    color: var(--neutral-800);
+    cursor: pointer;
+    margin-bottom: 0 !important;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+.badge-entrada {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    background: var(--primary-bg);
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(184, 134, 11, 0.3);
+}
+
 /* Action Buttons in Table */
 .action-btns {
     display: flex;

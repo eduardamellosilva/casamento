@@ -363,11 +363,27 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="orcamentoValor">Valor do Orçamento (R$) *</label>
+                                    <label for="orcamentoValor">Valor Total do Orçamento (R$) *</label>
                                     <div class="input-icon-wrapper">
                                         <i class="fa-solid fa-brazilian-real-sign"></i>
                                         <input type="number" id="orcamentoValor" class="form-control" placeholder="0,00" step="0.01" min="0" required>
                                     </div>
+                                </div>
+
+                                <div class="form-group checkbox-group">
+                                    <label class="checkbox-label" for="orcamentoPossuiEntrada">
+                                        <input type="checkbox" id="orcamentoPossuiEntrada" onchange="toggleEntradaInput()">
+                                        <span>Exige valor de entrada para reserva?</span>
+                                    </label>
+                                </div>
+
+                                <div class="form-group hidden" id="groupValorEntrada">
+                                    <label for="orcamentoValorEntrada">Valor da Entrada / Sinal (R$)</label>
+                                    <div class="input-icon-wrapper">
+                                        <i class="fa-solid fa-hand-holding-dollar"></i>
+                                        <input type="number" id="orcamentoValorEntrada" class="form-control" placeholder="0,00" step="0.01" min="0">
+                                    </div>
+                                    <small class="form-text">Valor exigido pelo fornecedor para garantir a data.</small>
                                 </div>
 
                                 <div class="form-group">
