@@ -87,6 +87,7 @@ let appState = {
     currentView: 'dashboardView',
     convidadoFilter: 'todos',
     convidadoRoleFilter: 'todos',
+    showConvidadosKpis: true,
     orcamentoFilter: 'todos',
     convidadoViewMode: 'cards',
     orcamentoViewMode: 'cards',
@@ -516,6 +517,28 @@ function deleteConvidado(id) {
     }
 }
 
+function toggleConvidadosKpis() {
+    appState.showConvidadosKpis = !appState.showConvidadosKpis;
+    saveState();
+    updateConvidadosKpisVisibility();
+}
+
+function updateConvidadosKpisVisibility() {
+    const kpiGrid = document.querySelector('.convidados-kpi-grid');
+    const btn = document.getElementById('btnToggleConvidadosKpis');
+    if (!kpiGrid || !btn) return;
+
+    if (appState.showConvidadosKpis !== false) {
+        kpiGrid.classList.remove('hidden');
+        btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> <span>Ocultar Resumo</span>';
+        btn.classList.remove('active');
+    } else {
+        kpiGrid.classList.add('hidden');
+        btn.innerHTML = '<i class="fa-solid fa-eye"></i> <span>Ver Resumo / Métricas</span>';
+        btn.classList.add('active');
+    }
+}
+
 function setConvidadoFilter(filter) {
     appState.convidadoFilter = filter;
     document.querySelectorAll('[data-filter]').forEach(tab => {
@@ -541,6 +564,7 @@ function getRoleIcon(funcao) {
 }
 
 function renderConvidadosTable() {
+    updateConvidadosKpisVisibility();
     const tbody = document.getElementById('tbodyConvidados');
     const searchInput = document.getElementById('searchConvidado');
     const search = searchInput ? searchInput.value.toLowerCase() : '';

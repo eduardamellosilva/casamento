@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=3.5">
+    <link rel="stylesheet" href="styles.css?v=4.0">
 </head>
 <body>
     <div class="app-layout">
@@ -233,6 +233,14 @@
 
                 <!-- VIEW: CONVIDADOS -->
                 <section class="view-section" id="convidadosView">
+                    <!-- Top Action Toolbar for Convidados -->
+                    <div class="view-top-actions mb-3 flex-between flex-wrap gap-2">
+                        <h3 class="view-sub-title"><i class="fa-solid fa-users"></i> Lista de Convidados & Jantar</h3>
+                        <button type="button" class="btn-toggle-kpi" id="btnToggleConvidadosKpis" onclick="toggleConvidadosKpis()">
+                            <i class="fa-solid fa-eye-slash"></i> <span>Ocultar Resumo</span>
+                        </button>
+                    </div>
+
                     <!-- Top KPI Summary Cards for Convidados -->
                     <div class="metrics-grid convidados-kpi-grid mb-4">
                         <div class="metric-card purple">
