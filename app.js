@@ -1141,16 +1141,9 @@ function renderDashboard() {
     document.getElementById('badgeOrcamentosCount').textContent = appState.orcamentos.length;
     document.getElementById('badgeFechadosCount').textContent = fechadosCount;
 
-    // Convidados Jantar Totals
+    // Convidados Totals
     const noivaConv = appState.convidados.filter(c => c.origem === 'Noiva');
     const noivoConv = appState.convidados.filter(c => c.origem === 'Noivo');
-
-    const totalJantarNoiva = noivaConv.reduce((acc, c) => acc + c.precoJantar, 0);
-    const totalJantarNoivo = noivoConv.reduce((acc, c) => acc + c.precoJantar, 0);
-    const totalJantarGeral = totalJantarNoiva + totalJantarNoivo;
-
-    document.getElementById('dashTotalJantar').textContent = formatCurrency(totalJantarGeral);
-    document.getElementById('dashJantarBreakdown').textContent = `Noiva: ${formatCurrency(totalJantarNoiva)} | Noivo: ${formatCurrency(totalJantarNoivo)}`;
 
     document.getElementById('dashTotalConvidados').textContent = `${appState.convidados.length} pessoas`;
     document.getElementById('dashConvidadosBreakdown').textContent = `Noiva: ${noivaConv.length} | Noivo: ${noivoConv.length}`;
@@ -1165,9 +1158,9 @@ function renderDashboard() {
     document.getElementById('dashTotalFechado').textContent = formatCurrency(fechadosVal);
     document.getElementById('dashFechadosCountSub').textContent = `${fechadosCount} contratos aprovados`;
 
-    // Valor Guardado & Saldo Restante
+    // Valor Guardado & Saldo Restante (Valor Guardado - Contratos Fechados)
     const valorGuardado = appState.valorGuardado || 0;
-    const totalComprometido = fechadosVal + totalJantarGeral;
+    const totalComprometido = fechadosVal;
     const saldoDisponivel = valorGuardado - totalComprometido;
 
     document.getElementById('dashValorGuardado').textContent = formatCurrency(valorGuardado);
