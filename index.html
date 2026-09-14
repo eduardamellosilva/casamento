@@ -233,6 +233,45 @@
 
                 <!-- VIEW: CONVIDADOS -->
                 <section class="view-section" id="convidadosView">
+                    <!-- Top KPI Summary Cards for Convidados -->
+                    <div class="metrics-grid convidados-kpi-grid mb-4">
+                        <div class="metric-card purple">
+                            <div class="metric-icon"><i class="fa-solid fa-users"></i></div>
+                            <div class="metric-data">
+                                <span class="metric-title">Total de Convidados</span>
+                                <h3 class="metric-value" id="kpiTotalConvidados">0 pessoas</h3>
+                                <span class="metric-sub" id="kpiConvidadosBreakdown">Noiva: 0 | Noivo: 0</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card rose">
+                            <div class="metric-icon"><i class="fa-solid fa-person-dress"></i></div>
+                            <div class="metric-data">
+                                <span class="metric-title">Lista da Noiva</span>
+                                <h3 class="metric-value" id="kpiTotalNoivaCount">0 convidados</h3>
+                                <span class="metric-sub" id="kpiJantarNoivaValue">Jantar: R$ 0,00</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card slate">
+                            <div class="metric-icon"><i class="fa-solid fa-user-tie"></i></div>
+                            <div class="metric-data">
+                                <span class="metric-title">Lista do Noivo</span>
+                                <h3 class="metric-value" id="kpiTotalNoivoCount">0 convidados</h3>
+                                <span class="metric-sub" id="kpiJantarNoivoValue">Jantar: R$ 0,00</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card emerald">
+                            <div class="metric-icon"><i class="fa-solid fa-utensils"></i></div>
+                            <div class="metric-data">
+                                <span class="metric-title">Custo Total Jantar</span>
+                                <h3 class="metric-value" id="kpiJantarTotalValue">R$ 0,00</h3>
+                                <span class="metric-sub" id="kpiJantarMediaValue">Média: R$ 0,00 / pessoa</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="section-grid">
                         <!-- Form Column -->
                         <div class="form-card">
@@ -266,12 +305,12 @@
                                         <i class="fa-solid fa-crown"></i>
                                         <select id="convidadoFuncao" class="form-control">
                                             <option value="">Convidado(a) Comum</option>
+                                            <option value="Madrinha">Madrinha</option>
+                                            <option value="Padrinho">Padrinho</option>
                                             <option value="Mãe da Noiva">Mãe da Noiva</option>
                                             <option value="Pai da Noiva">Pai da Noiva</option>
                                             <option value="Mãe do Noivo">Mãe do Noivo</option>
                                             <option value="Pai do Noivo">Pai do Noivo</option>
-                                            <option value="Padrinho">Padrinho</option>
-                                            <option value="Madrinha">Madrinha</option>
                                             <option value="Pajem">Pajem</option>
                                             <option value="Daminha">Daminha</option>
                                             <option value="Florista">Florista</option>
@@ -290,16 +329,16 @@
                                     </div>
                                     <div class="quick-preset-buttons mt-2">
                                         <span class="preset-label">Atalhos rápidos:</span>
-                                        <button type="button" class="preset-btn" onclick="setJantarPreset(79.90)">R$ 79,900</button>
-                                        <button type="button" class="preset-btn" onclick="setJantarPreset(39.95)">R$ 39,950</button>
-                                        <button type="button" class="preset-btn" onclick="setJantarPreset(0)">Não Paga (R$ 0,000)</button>
+                                        <button type="button" class="preset-btn" onclick="setJantarPreset(79.90)">R$ 79,90</button>
+                                        <button type="button" class="preset-btn" onclick="setJantarPreset(39.95)">R$ 39,95</button>
+                                        <button type="button" class="preset-btn" onclick="setJantarPreset(0)">Não Paga (R$ 0,00)</button>
                                     </div>
-                                    <small class="form-text">Selecione uma opção prévia acima ou digite qualquer valor desejado.</small>
+                                    <small class="form-text">Selecione um atalho acima ou digite o valor desejado.</small>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="convidadoObservacao">Observações (opcional)</label>
-                                    <textarea id="convidadoObservacao" class="form-control" rows="2" placeholder="Ex: Restrição alimentar, criança..."></textarea>
+                                    <textarea id="convidadoObservacao" class="form-control" rows="2" placeholder="Ex: Restrição alimentar, mesa preferencial..."></textarea>
                                 </div>
 
                                 <div class="form-actions">
@@ -315,11 +354,14 @@
 
                         <!-- Table Column -->
                         <div class="list-card">
-                            <div class="list-header">
-                                <div class="filter-tabs">
-                                    <button class="filter-tab active" data-filter="todos" onclick="setConvidadoFilter('todos')">Todos (<span id="countFilterTodos">0</span>)</button>
-                                    <button class="filter-tab" data-filter="Noiva" onclick="setConvidadoFilter('Noiva')">Noiva (<span id="countFilterNoiva">0</span>)</button>
-                                    <button class="filter-tab" data-filter="Noivo" onclick="setConvidadoFilter('Noivo')">Noivo (<span id="countFilterNoivo">0</span>)</button>
+                            <div class="list-header flex-column-mobile">
+                                <div class="filter-wrapper">
+                                    <!-- Filter by Origem -->
+                                    <div class="filter-tabs">
+                                        <button class="filter-tab active" data-filter="todos" onclick="setConvidadoFilter('todos')">Todos (<span id="countFilterTodos">0</span>)</button>
+                                        <button class="filter-tab" data-filter="Noiva" onclick="setConvidadoFilter('Noiva')">👰 Noiva (<span id="countFilterNoiva">0</span>)</button>
+                                        <button class="filter-tab" data-filter="Noivo" onclick="setConvidadoFilter('Noivo')">🤵 Noivo (<span id="countFilterNoivo">0</span>)</button>
+                                    </div>
                                 </div>
 
                                 <div class="list-header-actions">
@@ -334,11 +376,23 @@
                                 </div>
                             </div>
 
+                            <!-- Filter by Role Pills -->
+                            <div class="role-filter-bar">
+                                <span class="role-filter-label"><i class="fa-solid fa-filter"></i> Papel:</span>
+                                <div class="role-pills">
+                                    <button class="role-pill active" data-role="todos" onclick="setConvidadoRoleFilter('todos')">Todos</button>
+                                    <button class="role-pill" data-role="padrinhos" onclick="setConvidadoRoleFilter('padrinhos')"><i class="fa-solid fa-crown" style="font-size: 10px;"></i> Padrinhos & Madrinhas</button>
+                                    <button class="role-pill" data-role="criancas" onclick="setConvidadoRoleFilter('criancas')"><i class="fa-solid fa-wand-magic-sparkles" style="font-size: 10px;"></i> Pajens & Florista</button>
+                                    <button class="role-pill" data-role="familia" onclick="setConvidadoRoleFilter('familia')"><i class="fa-solid fa-heart" style="font-size: 10px;"></i> Pais</button>
+                                    <button class="role-pill" data-role="comum" onclick="setConvidadoRoleFilter('comum')">Convidados</button>
+                                </div>
+                            </div>
+
                             <!-- Summary Pill Row -->
                             <div class="convidados-summary-bar">
                                 <div class="summary-item">
-                                    <span>Total Pessoas:</span>
-                                    <strong id="summaryTotalPessoas">0</strong>
+                                    <span>Exibindo:</span>
+                                    <strong id="summaryTotalPessoas">0</strong> pessoas
                                 </div>
                                 <div class="summary-item">
                                     <span>Jantar Noiva:</span>
@@ -349,7 +403,7 @@
                                     <strong id="summaryJantarNoivo">R$ 0,000</strong>
                                 </div>
                                 <div class="summary-item highlight">
-                                    <span>Custo Total Jantar:</span>
+                                    <span>Subtotal Jantar:</span>
                                     <strong id="summaryJantarTotal">R$ 0,000</strong>
                                 </div>
                             </div>

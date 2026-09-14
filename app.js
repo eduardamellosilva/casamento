@@ -86,6 +86,7 @@ let appState = {
     orcamentos: [...defaultOrcamentos],
     currentView: 'dashboardView',
     convidadoFilter: 'todos',
+    convidadoRoleFilter: 'todos',
     orcamentoFilter: 'todos',
     convidadoViewMode: 'cards',
     orcamentoViewMode: 'cards',
@@ -511,80 +512,148 @@ function setConvidadoFilter(filter) {
     renderConvidadosTable();
 }
 
+function setConvidadoRoleFilter(role) {
+    appState.convidadoRoleFilter = role;
+    document.querySelectorAll('[data-role]').forEach(pill => {
+        pill.classList.toggle('active', pill.getAttribute('data-role') === role);
+    });
+    renderConvidadosTable();
+}
+
+function getRoleIcon(funcao) {
+    if (!funcao) return '<i class="fa-solid fa-user" style="font-size: 10px;"></i>';
+    if (funcao === 'Padrinho' || funcao === 'Madrinha') return '<i class="fa-solid fa-crown" style="font-size: 10px;"></i>';
+    if (funcao === 'Pajem' || funcao === 'Daminha' || funcao === 'Florista') return '<i class="fa-solid fa-wand-magic-sparkles" style="font-size: 10px;"></i>';
+    if (funcao.includes('Mãe') || funcao.includes('Pai')) return '<i class="fa-solid fa-heart" style="font-size: 10px;"></i>';
+    return '<i class="fa-solid fa-user" style="font-size: 10px;"></i>';
+}
+
 function renderConvidadosTable() {
     const tbody = document.getElementById('tbodyConvidados');
-    const search = document.getElementById('searchConvidado').value.toLowerCase();
-    tbody.innerHTML = '';
+    const searchInput = document.getElementById('searchConvidado');
+    const search = searchInput ? searchInput.value.toLowerCase() : '';
+    if (tbody) tbody.innerHTML = '';
 
     // Calculate Summary Counts
     const countTodos = appState.convidados.length;
     const countNoiva = appState.convidados.filter(c => c.origem === 'Noiva').length;
     const countNoivo = appState.convidados.filter(c => c.origem === 'Noivo').length;
 
-    document.getElementById('countFilterTodos').textContent = countTodos;
-    document.getElementById('countFilterNoiva').textContent = countNoiva;
-    document.getElementById('countFilterNoivo').textContent = countNoivo;
+    const totalJantarNoivaAll = appState.convidados.filter(c => c.origem === 'Noiva').reduce((acc, c) => acc + c.precoJantar, 0);
+    const totalJantarNoivoAll = appState.convidados.filter(c => c.origem === 'Noivo').reduce((acc, c) => acc + c.precoJantar, 0);
+    const totalJantarGeralAll = totalJantarNoivaAll + totalJantarNoivoAll;
+
+    // Update Top KPI Cards
+    const elTotalConvidados = document.getElementById('kpiTotalConvidados');
+    if (elTotalConvidados) elTotalConvidados.textContent = `${countTodos} pessoas`;
+    const elBreakdown = document.getElementById('kpiConvidadosBreakdown');
+    if (elBreakdown) elBreakdown.textContent = `Noiva: ${countNoiva} | Noivo: ${countNoivo}`;
+
+    const elNoivaCount = document.getElementById('kpiTotalNoivaCount');
+    if (elNoivaCount) elNoivaCount.textContent = `${countNoiva} convidados`;
+    const elNoivaJantar = document.getElementById('kpiJantarNoivaValue');
+    if (elNoivaJantar) elNoivaJantar.textContent = `Jantar: ${formatCurrency(totalJantarNoivaAll)}`;
+
+    const elNoivoCount = document.getElementById('kpiTotalNoivoCount');
+    if (elNoivoCount) elNoivoCount.textContent = `${countNoivo} convidados`;
+    const elNoivoJantar = document.getElementById('kpiJantarNoivoValue');
+    if (elNoivoJantar) elNoivoJantar.textContent = `Jantar: ${formatCurrency(totalJantarNoivoAll)}`;
+
+    const elJantarTotal = document.getElementById('kpiJantarTotalValue');
+    if (elJantarTotal) elJantarTotal.textContent = formatCurrency(totalJantarGeralAll);
+    const elJantarMedia = document.getElementById('kpiJantarMediaValue');
+    if (elJantarMedia) {
+        const media = countTodos > 0 ? totalJantarGeralAll / countTodos : 0;
+        elJantarMedia.textContent = `Média: ${formatCurrency(media)} / pessoa`;
+    }
+
+    // Filter Badges Counts
+    const countFilterTodos = document.getElementById('countFilterTodos');
+    if (countFilterTodos) countFilterTodos.textContent = countTodos;
+    const countFilterNoiva = document.getElementById('countFilterNoiva');
+    if (countFilterNoiva) countFilterNoiva.textContent = countNoiva;
+    const countFilterNoivo = document.getElementById('countFilterNoivo');
+    if (countFilterNoivo) countFilterNoivo.textContent = countNoivo;
 
     // Filter list
     let filtered = appState.convidados.filter(c => {
         const matchesFilter = appState.convidadoFilter === 'todos' || c.origem === appState.convidadoFilter;
+        
+        let matchesRole = true;
+        if (appState.convidadoRoleFilter === 'padrinhos') {
+            matchesRole = c.funcao === 'Padrinho' || c.funcao === 'Madrinha';
+        } else if (appState.convidadoRoleFilter === 'criancas') {
+            matchesRole = c.funcao === 'Pajem' || c.funcao === 'Daminha' || c.funcao === 'Florista';
+        } else if (appState.convidadoRoleFilter === 'familia') {
+            matchesRole = c.funcao && (c.funcao.includes('Mãe') || c.funcao.includes('Pai'));
+        } else if (appState.convidadoRoleFilter === 'comum') {
+            matchesRole = !c.funcao || c.funcao === '';
+        }
+
         const matchesSearch = c.nome.toLowerCase().includes(search) ||
             (c.funcao && c.funcao.toLowerCase().includes(search)) ||
             (c.observacao && c.observacao.toLowerCase().includes(search));
-        return matchesFilter && matchesSearch;
+        return matchesFilter && matchesRole && matchesSearch;
     });
 
     // Apply Column Sorting & Update Header Icons
     updateSortIcons('thRowConvidados', appState.convidadoSort.key, appState.convidadoSort.dir);
     sortItems(filtered, appState.convidadoSort.key, appState.convidadoSort.dir);
 
-    // Summary math
+    // Summary bar math for currently displayed subset
     const totalPessoas = filtered.length;
-    const totalJantarNoiva = appState.convidados.filter(c => c.origem === 'Noiva').reduce((acc, c) => acc + c.precoJantar, 0);
-    const totalJantarNoivo = appState.convidados.filter(c => c.origem === 'Noivo').reduce((acc, c) => acc + c.precoJantar, 0);
-    const totalJantarGeral = totalJantarNoiva + totalJantarNoivo;
+    const subtotalNoiva = filtered.filter(c => c.origem === 'Noiva').reduce((acc, c) => acc + c.precoJantar, 0);
+    const subtotalNoivo = filtered.filter(c => c.origem === 'Noivo').reduce((acc, c) => acc + c.precoJantar, 0);
+    const subtotalGeral = subtotalNoiva + subtotalNoivo;
 
-    document.getElementById('summaryTotalPessoas').textContent = totalPessoas;
-    document.getElementById('summaryJantarNoiva').textContent = formatCurrency(totalJantarNoiva);
-    document.getElementById('summaryJantarNoivo').textContent = formatCurrency(totalJantarNoivo);
-    document.getElementById('summaryJantarTotal').textContent = formatCurrency(totalJantarGeral);
+    const elSumPessoas = document.getElementById('summaryTotalPessoas');
+    if (elSumPessoas) elSumPessoas.textContent = totalPessoas;
+    const elSumNoiva = document.getElementById('summaryJantarNoiva');
+    if (elSumNoiva) elSumNoiva.textContent = formatCurrency(subtotalNoiva);
+    const elSumNoivo = document.getElementById('summaryJantarNoivo');
+    if (elSumNoivo) elSumNoivo.textContent = formatCurrency(subtotalNoivo);
+    const elSumTotal = document.getElementById('summaryJantarTotal');
+    if (elSumTotal) elSumTotal.textContent = formatCurrency(subtotalGeral);
 
-    // Render both Table and Cards
+    // Render Cards & View Mode
     renderConvidadosCards(filtered);
     setConvidadoViewMode(appState.convidadoViewMode);
 
-    if (filtered.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="6" class="empty-state">
-                    <i class="fa-solid fa-users-slash"></i>
-                    <p>Nenhum convidado encontrado.</p>
+    if (tbody) {
+        if (filtered.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="empty-state">
+                        <i class="fa-solid fa-users-slash"></i>
+                        <p>Nenhum convidado encontrado.</p>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        filtered.forEach(c => {
+            const tr = document.createElement('tr');
+            const badgeFuncaoClass = c.funcao ? c.funcao.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-') : 'comum';
+            const funcaoLabel = c.funcao ? c.funcao : 'Convidado(a)';
+
+            tr.innerHTML = `
+                <td><strong>${c.nome}</strong></td>
+                <td><span class="badge-origem ${c.origem}">${c.origem === 'Noiva' ? '👰 Noiva' : '🤵 Noivo'}</span></td>
+                <td><span class="badge-funcao ${badgeFuncaoClass}">${getRoleIcon(c.funcao)} ${funcaoLabel}</span></td>
+                <td><strong>${c.precoJantar === 0 ? '<span class="text-success">Gratuito</span>' : formatCurrency(c.precoJantar)}</strong></td>
+                <td>${c.observacao || '<span class="text-muted">-</span>'}</td>
+                <td class="text-right">
+                    <div class="action-btns">
+                        <button class="btn-icon edit" onclick="editConvidado('${c.id}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn-icon delete" onclick="deleteConvidado('${c.id}')" title="Excluir"><i class="fa-solid fa-trash"></i></button>
+                    </div>
                 </td>
             </tr>
-        `;
-        return;
+            `;
+            tbody.appendChild(tr);
+        });
     }
-
-    filtered.forEach(c => {
-        const tr = document.createElement('tr');
-        const badgeFuncaoClass = c.funcao ? c.funcao.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-') : 'comum';
-        const funcaoLabel = c.funcao ? c.funcao : 'Convidado(a)';
-
-        tr.innerHTML = `
-            <td><strong>${c.nome}</strong></td>
-            <td><span class="badge-origem ${c.origem}">${c.origem}</span></td>
-            <td><span class="badge-funcao ${badgeFuncaoClass}"><i class="fa-solid fa-crown" style="font-size: 10px;"></i> ${funcaoLabel}</span></td>
-            <td><strong>${formatCurrency(c.precoJantar)}</strong></td>
-            <td>${c.observacao || '<span class="text-muted">-</span>'}</td>
-            <td class="text-right">
-                <div class="action-btns">
-                    <button class="btn-icon edit" onclick="editConvidado('${c.id}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                    <button class="btn-icon delete" onclick="deleteConvidado('${c.id}')" title="Excluir"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
 }
 
 function renderConvidadosCards(filtered) {
@@ -595,8 +664,8 @@ function renderConvidadosCards(filtered) {
     if (filtered.length === 0) {
         container.innerHTML = `
             <div class="empty-state p-4 text-center">
-                <i class="fa-solid fa-users-slash" style="font-size: 32px; color: var(--neutral-400);"></i>
-                <p class="mt-2">Nenhum convidado encontrado.</p>
+                <i class="fa-solid fa-users-slash" style="font-size: 36px; color: var(--neutral-400);"></i>
+                <p class="mt-2">Nenhum convidado encontrado com os filtros selecionados.</p>
             </div>
         `;
         return;
@@ -604,10 +673,11 @@ function renderConvidadosCards(filtered) {
 
     filtered.forEach(c => {
         const card = document.createElement('div');
-        card.className = 'item-card convidado-item-card';
+        card.className = `item-card convidado-item-card origem-${c.origem}`;
         const badgeFuncaoClass = c.funcao ? c.funcao.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-') : 'comum';
         const funcaoLabel = c.funcao ? c.funcao : 'Convidado(a)';
         const initials = c.nome.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
+        const roleIcon = getRoleIcon(c.funcao);
 
         card.innerHTML = `
             <div class="item-card-header">
@@ -615,19 +685,20 @@ function renderConvidadosCards(filtered) {
                     <div class="avatar-circle ${c.origem}">${initials}</div>
                     <div>
                         <h4 class="item-card-title">${c.nome}</h4>
-                        <span class="badge-origem ${c.origem}">${c.origem}</span>
+                        <span class="badge-origem ${c.origem}">${c.origem === 'Noiva' ? '👰 Noiva' : '🤵 Noivo'}</span>
                     </div>
                 </div>
-                <span class="badge-funcao ${badgeFuncaoClass}"><i class="fa-solid fa-crown" style="font-size: 10px;"></i> ${funcaoLabel}</span>
+                <span class="badge-funcao ${badgeFuncaoClass}">${roleIcon} ${funcaoLabel}</span>
             </div>
             <div class="item-card-body">
                 <div class="card-detail-row">
                     <span class="detail-label">Preço Jantar:</span>
-                    <strong class="detail-value text-primary">${formatCurrency(c.precoJantar)}</strong>
+                    <strong class="detail-value text-primary">${c.precoJantar === 0 ? '<span class="text-success"><i class="fa-solid fa-gift"></i> Gratuito</span>' : formatCurrency(c.precoJantar)}</strong>
                 </div>
                 ${c.observacao ? `<div class="card-obs"><i class="fa-solid fa-comment-dots"></i> ${c.observacao}</div>` : ''}
             </div>
             <div class="item-card-footer">
+                <span class="card-date-badge"><i class="fa-solid fa-circle" style="font-size: 8px; color: var(--primary);"></i> ${c.origem}</span>
                 <div class="action-btns">
                     <button class="btn-icon edit" onclick="editConvidado('${c.id}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
                     <button class="btn-icon delete" onclick="deleteConvidado('${c.id}')" title="Excluir"><i class="fa-solid fa-trash"></i></button>

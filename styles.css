@@ -510,6 +510,8 @@ h1, h2, h3, h4 {
 .metric-card.indigo .metric-icon { background: #E0E7FF; color: #4338CA; }
 .metric-card.ruby .metric-icon { background: var(--danger-bg); color: var(--danger); }
 .metric-card.ruby .metric-value { color: var(--danger); }
+.metric-card.rose .metric-icon { background: #FCE4EC; color: #C2185B; }
+.metric-card.slate .metric-icon { background: #E8EAF6; color: #1A237E; }
 
 .metric-data {
     display: flex;
@@ -843,11 +845,69 @@ textarea.form-control {
     border-color: var(--primary);
 }
 
+/* Role Filter Pills Bar */
+.role-filter-bar {
+    background: var(--white);
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--neutral-200);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.role-filter-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--neutral-500);
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.role-pills {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.role-pill {
+    padding: 5px 12px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--neutral-300);
+    background: var(--neutral-100);
+    color: var(--neutral-700);
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.role-pill:hover {
+    background: var(--neutral-200);
+    color: var(--neutral-900);
+    border-color: var(--neutral-400);
+}
+
+.role-pill.active {
+    background: linear-gradient(135deg, var(--neutral-900) 0%, var(--neutral-800) 100%);
+    color: var(--white);
+    border-color: var(--neutral-900);
+    box-shadow: var(--shadow-sm);
+}
+
 /* Convidados Summary Bar */
 .convidados-summary-bar {
-    background: var(--neutral-100);
+    background: var(--primary-bg);
     padding: 12px 20px;
-    border-bottom: 1px solid var(--neutral-200);
+    border-bottom: 1px solid rgba(184, 134, 11, 0.2);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -865,7 +925,7 @@ textarea.form-control {
 
 .summary-item.highlight strong {
     color: var(--primary-dark);
-    font-size: 1rem;
+    font-size: 1.05rem;
 }
 
 /* Table Design */
@@ -1672,9 +1732,22 @@ textarea.form-control {
     gap: 10px;
 }
 
+.convidado-item-card {
+    border-left: 4px solid var(--neutral-300);
+    position: relative;
+}
+
+.convidado-item-card.origem-Noiva {
+    border-left-color: #C2185B;
+}
+
+.convidado-item-card.origem-Noivo {
+    border-left-color: #1565C0;
+}
+
 .avatar-circle {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
     border-radius: var(--radius-full);
     display: flex;
     align-items: center;
@@ -1682,18 +1755,19 @@ textarea.form-control {
     font-weight: 700;
     font-size: 0.85rem;
     flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
 }
 
 .avatar-circle.Noiva {
-    background: var(--rose-gold-light);
-    color: #9E563B;
-    border: 1px solid var(--rose-gold);
+    background: linear-gradient(135deg, #FCE4EC 0%, #F8BBD0 100%);
+    color: #880E4F;
+    border: 1px solid #F48FB1;
 }
 
 .avatar-circle.Noivo {
-    background: var(--accent-light);
-    color: var(--accent);
-    border: 1px solid rgba(107, 78, 113, 0.3);
+    background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+    color: #0D47A1;
+    border: 1px solid #90CAF9;
 }
 
 .item-card-title {
