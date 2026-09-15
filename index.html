@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="color-scheme" content="light">
-    <meta name="supported-color-schemes" content="light">
     <title>Planejamento de Casamento 💍 | Gestão & Contratos</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -77,13 +75,6 @@
                             <span>4. Relatórios</span>
                         </button>
                     </li>
-                    <li>
-                        <button class="nav-link" data-view="calendarioView">
-                            <i class="fa-solid fa-calendar-days"></i>
-                            <span>5. Agenda & Calendário</span>
-                            <span class="badge badge-info" id="badgeCompromissosCount">0</span>
-                        </button>
-                    </li>
                 </ul>
             </nav>
 
@@ -104,10 +95,7 @@
                     <button class="btn-hamburger" id="btnHamburger" aria-label="Abrir Menu">
                         <i class="fa-solid fa-bars"></i>
                     </button>
-                    <div class="topbar-title-group">
-                        <h1 class="page-title" id="pageTitle">Visão Geral do Planejamento</h1>
-                        <div class="topbar-quote"><i class="fa-solid fa-heart text-accent"></i> Um passo de cada vez, até o nosso para sempre 🤍</div>
-                    </div>
+                    <h1 class="page-title" id="pageTitle">Visão Geral do Planejamento</h1>
                 </div>
 
                 <div class="topbar-right">
@@ -130,7 +118,7 @@
 
                 <!-- VIEW: VISÃO GERAL (DASHBOARD) -->
                 <section class="view-section active" id="dashboardView">
-                    <!-- HERO BANNER COM FIRULAS: EDUARDA & GUILHERME + CONTAGEM REGRESSIVA -->
+                    <!-- HERO BANNER: EDUARDA & GUILHERME + CONTAGEM REGRESSIVA -->
                     <div class="wedding-hero-card mb-4">
                         <div class="wedding-hero-glow"></div>
                         <div class="wedding-hero-content">
@@ -141,7 +129,6 @@
                                     <i class="fa-solid fa-sparkles text-gold"></i> Um passo de cada vez, até o nosso para sempre 🤍
                                 </div>
                                 <h1 class="hero-couple-title">💍 EDUARDA & GUILHERME</h1>
-                                <p class="hero-subtitle">Contagem regressiva rumo ao nosso Grande Dia</p>
                             </div>
 
                             <!-- Date Config / Selection -->
@@ -179,7 +166,7 @@
                                 </div>
                             </div>
 
-                            <!-- Delicate Bible Verse Banner (Posicionado abaixo da contagem regressiva) -->
+                            <!-- Delicate Bible Verse Banner -->
                             <div class="wedding-verse-banner mt-2">
                                 <i class="fa-solid fa-quote-left verse-icon-left"></i>
                                 <p class="verse-body">“O amor é paciente, o amor é bondoso. Não inveja, não se vangloria, não se orgulha [...] Tudo sofre, tudo crê, tudo espera, tudo suporta.”</p>
@@ -261,8 +248,8 @@
                             <div class="metric-icon"><i class="fa-solid fa-users"></i></div>
                             <div class="metric-data">
                                 <span class="metric-title">Total de Convidados</span>
-                                <h3 class="metric-value" id="kpiTotalConvidados">👥 0 convidados</h3>
-                                <span class="metric-sub" id="kpiConvidadosBreakdown">👤 0 adultos · 🧒 0 crianças</span>
+                                <h3 class="metric-value" id="kpiTotalConvidados">0 pessoas</h3>
+                                <span class="metric-sub" id="kpiConvidadosBreakdown">Noiva: 0 | Noivo: 0</span>
                             </div>
                         </div>
 
@@ -320,18 +307,6 @@
                                         <select id="convidadoOrigem" class="form-control" required>
                                             <option value="Noiva">Noiva</option>
                                             <option value="Noivo">Noivo</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="convidadoTipo">Tipo *</label>
-                                    <div class="input-icon-wrapper">
-                                        <i class="fa-solid fa-users-between-lines"></i>
-                                        <select id="convidadoTipo" class="form-control" required>
-                                            <option value="Adulto">Adulto</option>
-                                            <option value="Criança">Criança</option>
-                                            <option value="Criança não pagante">Criança não pagante</option>
                                         </select>
                                     </div>
                                 </div>
@@ -457,7 +432,6 @@
                                         <tr id="thRowConvidados">
                                             <th class="sortable" data-sort-key="nome" onclick="toggleConvidadoSort('nome')">Nome <i class="fa-solid fa-sort sort-icon"></i></th>
                                             <th class="sortable" data-sort-key="origem" onclick="toggleConvidadoSort('origem')">Origem <i class="fa-solid fa-sort sort-icon"></i></th>
-                                            <th class="sortable" data-sort-key="tipo" onclick="toggleConvidadoSort('tipo')">Tipo <i class="fa-solid fa-sort sort-icon"></i></th>
                                             <th class="sortable" data-sort-key="funcao" onclick="toggleConvidadoSort('funcao')">Papel / Função <i class="fa-solid fa-sort sort-icon"></i></th>
                                             <th class="sortable" data-sort-key="precoJantar" onclick="toggleConvidadoSort('precoJantar')">Valor Jantar (R$) <i class="fa-solid fa-sort sort-icon"></i></th>
                                             <th class="sortable" data-sort-key="observacao" onclick="toggleConvidadoSort('observacao')">Observação <i class="fa-solid fa-sort sort-icon"></i></th>
@@ -680,8 +654,8 @@
                             <div class="metric-icon"><i class="fa-solid fa-users"></i></div>
                             <div class="metric-data">
                                 <span class="metric-title">Total de Convidados</span>
-                                <h3 class="metric-value" id="dashTotalConvidados">👥 0 convidados</h3>
-                                <span class="metric-sub" id="dashConvidadosBreakdown">👤 0 adultos · 🧒 0 crianças</span>
+                                <h3 class="metric-value" id="dashTotalConvidados">0 pessoas</h3>
+                                <span class="metric-sub" id="dashConvidadosBreakdown">Noiva: 0 | Noivo: 0</span>
                             </div>
                         </div>
 
@@ -815,77 +789,6 @@
                     </div>
                 </section>
 
-                <!-- VIEW: CALENDÁRIO & AGENDA DE COMPROMISSOS -->
-                <section class="view-section" id="calendarioView">
-                    <div class="card mb-4">
-                        <div class="card-header flex-between flex-wrap gap-2">
-                            <div>
-                                <h3><i class="fa-solid fa-calendar-days text-primary"></i> Agenda & Calendário do Casamento</h3>
-                                <p class="text-muted" style="font-size: 0.85rem;">Organize degustações, reuniões com fornecedores, provas de roupas e prazos de pagamento.</p>
-                            </div>
-                            <div class="flex-center gap-2">
-                                <button type="button" class="btn-primary" onclick="openModalCompromisso()">
-                                    <i class="fa-solid fa-calendar-plus"></i> Novo Compromisso
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Layout Grid: Calendário Mês + Lista de Compromissos -->
-                    <div class="calendar-layout-grid">
-                        <!-- Mês Interativo -->
-                        <div class="calendar-main-card">
-                            <div class="calendar-nav-bar flex-between mb-3">
-                                <div class="calendar-month-title">
-                                    <button type="button" class="btn-icon" onclick="changeCalendarMonth(-1)" title="Mês Anterior">
-                                        <i class="fa-solid fa-chevron-left"></i>
-                                    </button>
-                                    <h4 id="calendarMonthLabel">Setembro de 2026</h4>
-                                    <button type="button" class="btn-icon" onclick="changeCalendarMonth(1)" title="Próximo Mês">
-                                        <i class="fa-solid fa-chevron-right"></i>
-                                    </button>
-                                </div>
-                                <button type="button" class="btn-secondary btn-sm" onclick="setCalendarToday()">
-                                    <i class="fa-solid fa-calendar-day"></i> Hoje
-                                </button>
-                            </div>
-
-                            <div class="calendar-weekdays-header">
-                                <div>Dom</div>
-                                <div>Seg</div>
-                                <div>Ter</div>
-                                <div>Qua</div>
-                                <div>Qui</div>
-                                <div>Sex</div>
-                                <div>Sáb</div>
-                            </div>
-
-                            <div class="calendar-days-grid" id="calendarDaysGrid">
-                                <!-- Preenchido dinamicamente via JS -->
-                            </div>
-                        </div>
-
-                        <!-- Lista de Compromissos -->
-                        <div class="calendar-side-panel">
-                            <div class="card">
-                                <div class="card-header flex-between flex-wrap gap-2">
-                                    <h4 id="compromissosSectionTitle"><i class="fa-solid fa-clock text-accent"></i> Próximos Compromissos</h4>
-                                    <div class="calendar-filter-tabs">
-                                        <button type="button" class="tab-chip active" id="tabCompAll" onclick="setCompromissoFilter('todos')">Todos</button>
-                                        <button type="button" class="tab-chip" id="tabCompPending" onclick="setCompromissoFilter('pendentes')">Pendentes</button>
-                                        <button type="button" class="tab-chip" id="tabCompDone" onclick="setCompromissoFilter('concluidos')">Concluídos</button>
-                                    </div>
-                                </div>
-                                <div class="card-body p-2">
-                                    <div class="compromissos-list" id="compromissosListContainer">
-                                        <!-- Lista preenchida dinamicamente -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
             </div>
         </main>
     </div>
@@ -956,82 +859,6 @@
             </div>
             <div class="modal-footer">
                 <button class="btn-secondary" id="btnClosePagamentoModalFooter">Cancelar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL: NOVO / EDITAR COMPROMISSO -->
-    <div class="modal-overlay" id="modalCompromisso">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3 id="modalCompromissoTitle"><i class="fa-solid fa-calendar-plus text-primary"></i> Novo Compromisso</h3>
-                <button class="btn-close-modal" onclick="closeModalCompromisso()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="formCompromisso" onsubmit="salvarCompromisso(event)">
-                    <input type="hidden" id="compromissoId">
-                    <div class="form-group mb-3">
-                        <label for="compromissoTitulo">Título / Descrição do Compromisso *</label>
-                        <div class="input-icon-wrapper">
-                            <i class="fa-solid fa-heading"></i>
-                            <input type="text" id="compromissoTitulo" class="form-control" placeholder="Ex: Degustação do Buffet, Prova do Vestido" required>
-                        </div>
-                    </div>
-
-                    <div class="form-row grid-2 mb-3">
-                        <div class="form-group">
-                            <label for="compromissoData">Data *</label>
-                            <input type="date" id="compromissoData" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="compromissoHora">Horário</label>
-                            <input type="time" id="compromissoHora" class="form-control">
-                        </div>
-                    </div>
-
-                    <div class="form-row grid-2 mb-3">
-                        <div class="form-group">
-                            <label for="compromissoCategoria">Tipo / Categoria</label>
-                            <select id="compromissoCategoria" class="form-control">
-                                <option value="Degustação">🍷 Degustação</option>
-                                <option value="Reunião">🤝 Reunião</option>
-                                <option value="Pagamento">💰 Pagamento / Vencimento</option>
-                                <option value="Prova de Roupa">👗 Prova de Roupa / Traje</option>
-                                <option value="Visita Técnica">🏛️ Visita Técnica</option>
-                                <option value="Fotos / Ensaio">📸 Fotos / Ensaio</option>
-                                <option value="Outros">📌 Outros</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="compromissoLocal">Local ou Link</label>
-                            <input type="text" id="compromissoLocal" class="form-control" placeholder="Ex: Espaço Jardim Real / Google Meet">
-                        </div>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="compromissoObservacao">Observações / Anotações</label>
-                        <textarea id="compromissoObservacao" class="form-control" rows="3" placeholder="Detalhes, contatos, o que levar..."></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="checkbox-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                            <input type="checkbox" id="compromissoConcluido" style="width: 18px; height: 18px;">
-                            <span>Marcar como compromisso concluído</span>
-                        </label>
-                    </div>
-
-                    <div class="form-actions mt-4 flex-between">
-                        <button type="button" class="btn-danger-light hidden" id="btnDeleteCompromisso" onclick="confirmDeleteCompromisso()">
-                            <i class="fa-solid fa-trash"></i> Excluir
-                        </button>
-                        <div class="flex-center gap-2 ml-auto">
-                            <button type="button" class="btn-secondary" onclick="closeModalCompromisso()">Cancelar</button>
-                            <button type="submit" class="btn-primary">
-                                <i class="fa-solid fa-floppy-disk"></i> Salvar
-                            </button>
-                        </div>
-                    </div>
-                </form>
             </div>
         </div>
     </div>

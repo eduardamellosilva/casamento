@@ -3,7 +3,6 @@
    ========================================================================== */
 
 :root {
-    color-scheme: light !important;
     /* Color Palette */
     --primary: #B8860B;            /* Gold / Dark Goldenrod */
     --primary-light: #DFB76C;      /* Soft Gold */
@@ -58,12 +57,6 @@
     box-sizing: border-box;
 }
 
-html {
-    color-scheme: light !important;
-    background-color: var(--neutral-100) !important;
-    color: var(--neutral-800) !important;
-}
-
 .hidden {
     display: none !important;
 }
@@ -85,10 +78,9 @@ html {
 .flex-1 { flex: 1 !important; }
 
 body {
-    color-scheme: light !important;
     font-family: var(--font-body);
-    background-color: var(--neutral-100) !important;
-    color: var(--neutral-800) !important;
+    background-color: var(--neutral-100);
+    color: var(--neutral-800);
     line-height: 1.5;
     font-size: 15px;
     overflow-x: hidden;
@@ -1087,31 +1079,6 @@ textarea.form-control {
 .badge-origem.Noivo {
     background: #E3F2FD;
     color: #1565C0;
-}
-
-.badge-tipo {
-    padding: 3px 8px;
-    border-radius: var(--radius-sm);
-    font-size: 0.75rem;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.badge-tipo.Adulto {
-    background: #E8F5E9;
-    color: #2E7D32;
-}
-
-.badge-tipo.Crianca, .badge-tipo.Criança {
-    background: #FFF3E0;
-    color: #E65100;
-}
-
-.badge-tipo.Crianca-nao-pagante, .badge-tipo.Criança-não-pagante {
-    background: #E0F7FA;
-    color: #00838F;
 }
 
 .badge-funcao {
@@ -2380,6 +2347,9 @@ textarea.form-control {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
     gap: 10px;
 }
 
@@ -2409,18 +2379,12 @@ textarea.form-control {
     font-size: 2.3rem;
     font-weight: 700;
     letter-spacing: 2px;
+    text-align: center;
     background: linear-gradient(135deg, #FFFFFF 20%, #F4E8E2 60%, #DFB76C 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    margin: 6px 0 4px 0;
-}
-
-.hero-subtitle {
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.78);
-    margin-top: 4px;
-    margin-bottom: 6px;
+    margin: 6px auto;
 }
 
 /* Delicate Bible Verse Banner */
@@ -2580,51 +2544,7 @@ textarea.form-control {
     margin-bottom: 12px;
 }
 
-.countdown-footer-msg {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.92rem;
-    color: #F4E8E2;
-    font-weight: 500;
-}
-
-.pulse-icon {
-    color: #DFB76C;
-    animation: pulseHeart 1.8s infinite;
-}
-
-@keyframes pulseHeart {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.25); }
-    100% { transform: scale(1); }
-}
-
-.hero-actions {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-/* Topbar Subtitle / Quote */
-.topbar-title-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.topbar-quote {
-    font-size: 0.78rem;
-    color: var(--neutral-600);
-    font-style: italic;
-    margin-top: 2px;
-}
-
 @media (max-width: 768px) {
-    .topbar-quote {
-        display: none !important;
-    }
-
     .wedding-hero-card {
         padding: 20px 14px;
         border-radius: var(--radius-md);
@@ -2653,12 +2573,6 @@ textarea.form-control {
         white-space: normal;
     }
 
-    .hero-subtitle {
-        font-size: 0.82rem;
-        margin-top: 2px;
-        margin-bottom: 8px;
-    }
-
     .wedding-verse-banner {
         padding: 10px 14px;
         max-width: 100%;
@@ -2671,362 +2585,24 @@ textarea.form-control {
     }
 
     .verse-citation {
-        font-size: 0.7rem;
-    }
-
-    .wedding-date-config {
-        width: 100%;
-        border-radius: var(--radius-md);
-        padding: 10px 10px;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .date-config-label {
-        font-size: 0.82rem;
-    }
-
-    .date-options-wrapper {
-        width: 100%;
-        justify-content: center;
-        gap: 6px;
-    }
-
-    .btn-date-chip {
-        padding: 5px 10px;
-        font-size: 0.78rem;
-    }
-
-    .custom-date-picker {
-        padding: 3px 8px;
-    }
-
-    .date-input-field {
-        font-size: 0.78rem;
-        max-width: 110px;
-    }
-
-    .countdown-container {
-        width: 100%;
-        gap: 3px;
-        justify-content: space-between;
+        font-size: 0.72rem;
     }
 
     .countdown-unit-card {
-        flex: 1;
-        min-width: 0;
-        padding: 8px 2px;
-        border-radius: 8px;
+        min-width: 58px;
+        padding: 8px 6px;
     }
 
     .countdown-val {
-        font-size: 1.25rem;
+        font-size: 1.4rem;
     }
 
     .countdown-lbl {
         font-size: 0.6rem;
-        letter-spacing: 0.2px;
-        margin-top: 2px;
     }
 
     .countdown-divider {
-        font-size: 0.95rem;
-        margin-bottom: 6px;
-        color: rgba(223, 183, 108, 0.5);
-    }
-
-    .countdown-footer-msg {
-        flex-direction: column;
-        text-align: center;
-        gap: 4px;
-        font-size: 0.82rem;
-        padding: 0 4px;
-    }
-
-    .hero-actions {
-        width: 100%;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .hero-actions button {
-        width: 100%;
-    }
-}
-
-/* ==========================================================================
-   INTERACTIVE CALENDAR & AGENDA MODULE
-   ========================================================================== */
-.calendar-layout-grid {
-    display: grid;
-    grid-template-columns: 1fr 380px;
-    gap: 20px;
-    align-items: start;
-}
-
-.calendar-main-card {
-    background: var(--white);
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--neutral-200);
-    padding: 24px;
-    box-shadow: var(--shadow-sm);
-}
-
-.calendar-month-title {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.calendar-month-title h4 {
-    font-size: 1.2rem;
-    font-family: var(--font-heading);
-    color: var(--neutral-900);
-    min-width: 160px;
-    text-align: center;
-}
-
-.calendar-weekdays-header {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    text-align: center;
-    font-weight: 700;
-    font-size: 0.78rem;
-    color: var(--neutral-600);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--neutral-200);
-    margin-bottom: 10px;
-}
-
-.calendar-days-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
-}
-
-.calendar-day-cell {
-    aspect-ratio: 1;
-    min-height: 65px;
-    background: var(--neutral-100);
-    border: 1px solid var(--neutral-200);
-    border-radius: var(--radius-md);
-    padding: 6px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    cursor: pointer;
-    transition: var(--transition);
-    position: relative;
-}
-
-.calendar-day-cell:hover {
-    background: var(--primary-bg);
-    border-color: var(--primary-light);
-    transform: translateY(-2px);
-}
-
-.calendar-day-cell.disabled-day {
-    opacity: 0.35;
-    background: var(--neutral-100);
-    cursor: default;
-}
-
-.calendar-day-cell.disabled-day:hover {
-    transform: none;
-    border-color: var(--neutral-200);
-}
-
-.calendar-day-cell.today {
-    border: 2px solid var(--primary);
-    background: var(--primary-bg);
-}
-
-.calendar-day-cell.selected {
-    background: linear-gradient(135deg, var(--accent-light) 0%, var(--white) 100%);
-    border: 2px solid var(--accent);
-    box-shadow: 0 4px 12px rgba(107, 78, 113, 0.15);
-}
-
-.day-number {
-    font-weight: 700;
-    font-size: 0.92rem;
-    color: var(--neutral-800);
-}
-
-.calendar-day-cell.today .day-number {
-    color: var(--primary-dark);
-}
-
-.event-dots {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    flex-wrap: wrap;
-    margin-top: auto;
-}
-
-.event-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--primary);
-}
-
-.event-dot.degustacao { background: #D8A48F; }
-.event-dot.reuniao { background: #6B4E71; }
-.event-dot.pagamento { background: #2E7D32; }
-.event-dot.prova { background: #E91E63; }
-.event-dot.visita { background: #ED6C02; }
-.event-dot.fotos { background: #0284C7; }
-
-.event-dot-more {
-    font-size: 0.62rem;
-    font-weight: 700;
-    color: var(--neutral-600);
-}
-
-/* Agenda Panel & Compromisso Cards */
-.calendar-filter-tabs {
-    display: flex;
-    gap: 4px;
-}
-
-.tab-chip {
-    background: var(--neutral-200);
-    border: none;
-    color: var(--neutral-700);
-    padding: 4px 10px;
-    border-radius: var(--radius-full);
-    font-size: 0.75rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.tab-chip.active {
-    background: var(--primary);
-    color: var(--white);
-}
-
-.compromissos-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-height: 520px;
-    overflow-y: auto;
-    padding-right: 4px;
-}
-
-.compromisso-item-card {
-    background: var(--white);
-    border: 1px solid var(--neutral-200);
-    border-left: 4px solid var(--primary);
-    border-radius: var(--radius-md);
-    padding: 12px 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    transition: var(--transition);
-    box-shadow: var(--shadow-sm);
-}
-
-.compromisso-item-card:hover {
-    box-shadow: var(--shadow-md);
-    border-color: var(--primary-light);
-}
-
-.compromisso-item-card.concluido {
-    opacity: 0.65;
-    background: var(--neutral-100);
-    border-left-color: var(--neutral-400);
-}
-
-.compromisso-item-card.concluido .comp-title {
-    text-decoration: line-through;
-    color: var(--neutral-600);
-}
-
-.comp-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-}
-
-.comp-date-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--primary-dark);
-    background: var(--primary-bg);
-    padding: 2px 8px;
-    border-radius: var(--radius-sm);
-}
-
-.comp-category-badge {
-    font-size: 0.72rem;
-    padding: 2px 8px;
-    border-radius: var(--radius-full);
-    font-weight: 600;
-    background: var(--neutral-200);
-    color: var(--neutral-800);
-}
-
-.comp-title {
-    font-weight: 700;
-    font-size: 0.95rem;
-    color: var(--neutral-900);
-}
-
-.comp-details {
-    font-size: 0.8rem;
-    color: var(--neutral-600);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.comp-actions {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 4px;
-    padding-top: 6px;
-    border-top: 1px dashed var(--neutral-200);
-}
-
-.btn-icon-danger {
-    background: none;
-    border: none;
-    color: var(--danger);
-    cursor: pointer;
-    font-size: 0.85rem;
-    padding: 4px 6px;
-    border-radius: 4px;
-}
-
-.btn-icon-danger:hover {
-    background: var(--danger-bg);
-}
-
-@media (max-width: 992px) {
-    .calendar-layout-grid {
-        grid-template-columns: 1fr;
-    }
-    .calendar-main-card {
-        padding: 16px 12px;
-    }
-    .calendar-day-cell {
-        min-height: 48px;
-        padding: 4px;
-    }
-    .day-number {
-        font-size: 0.82rem;
+        font-size: 1.2rem;
     }
 }
 
