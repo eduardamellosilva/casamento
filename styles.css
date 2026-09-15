@@ -2301,5 +2301,296 @@ textarea.form-control {
     }
 }
 
+/* ==========================================================================
+   WEDDING HERO CARD & COUNTDOWN TIMER ("FIRULAS")
+   ========================================================================== */
+.wedding-hero-card {
+    position: relative;
+    background: linear-gradient(135deg, #1A1A2E 0%, #2A1B3D 45%, #4A2644 100%);
+    border-radius: var(--radius-lg);
+    padding: 32px 24px;
+    color: var(--white);
+    box-shadow: 0 16px 36px rgba(42, 27, 61, 0.35), 0 0 24px rgba(223, 183, 108, 0.2);
+    overflow: hidden;
+    border: 1px solid rgba(223, 183, 108, 0.3);
+    transition: var(--transition);
+}
+
+.wedding-hero-glow {
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 260px;
+    height: 260px;
+    background: radial-gradient(circle, rgba(223, 183, 108, 0.3) 0%, rgba(216, 164, 143, 0.12) 50%, transparent 70%);
+    pointer-events: none;
+    border-radius: 50%;
+    animation: floatGlow 8s ease-in-out infinite alternate;
+}
+
+@keyframes floatGlow {
+    0% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+    100% { transform: translate(-30px, 30px) scale(1.2); opacity: 0.9; }
+}
+
+.wedding-hero-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 18px;
+}
+
+.hero-quote-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: var(--radius-full);
+    padding: 6px 18px;
+    font-size: 0.88rem;
+    color: #F7E7CE;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.text-gold {
+    color: #DFB76C !important;
+}
+
+.hero-couple-title {
+    font-family: var(--font-heading);
+    font-size: 2.3rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, #FFFFFF 20%, #F4E8E2 60%, #DFB76C 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    margin: 4px 0 0 0;
+}
+
+.hero-subtitle {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.78);
+    margin-top: -6px;
+}
+
+/* Date Selector */
+.wedding-date-config {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(10px);
+    padding: 8px 18px;
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.date-config-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.88rem;
+    color: #DFB76C;
+    font-weight: 600;
+}
+
+.date-options-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn-date-chip {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--white);
+    padding: 5px 14px;
+    border-radius: var(--radius-full);
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-date-chip:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: #DFB76C;
+}
+
+.btn-date-chip.active {
+    background: linear-gradient(135deg, #B8860B 0%, #DFB76C 100%);
+    color: #1A1A2E;
+    font-weight: 700;
+    border-color: #DFB76C;
+    box-shadow: 0 2px 10px rgba(223, 183, 108, 0.4);
+}
+
+.custom-date-picker {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: var(--radius-full);
+    padding: 4px 10px;
+    color: var(--white);
+}
+
+.custom-date-picker i {
+    font-size: 0.78rem;
+    color: #DFB76C;
+    margin-right: 4px;
+}
+
+.date-input-field {
+    background: transparent;
+    border: none;
+    color: var(--white);
+    font-family: inherit;
+    font-size: 0.82rem;
+    outline: none;
+    cursor: pointer;
+}
+
+.date-input-field::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
+/* Countdown Unit Cards */
+.countdown-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.countdown-unit-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.09);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-md);
+    min-width: 82px;
+    padding: 12px 14px;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 8px 16px rgba(0, 0, 0, 0.25);
+    transition: var(--transition);
+}
+
+.countdown-unit-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(223, 183, 108, 0.5);
+}
+
+.countdown-val {
+    font-family: var(--font-heading);
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: #FFF;
+    line-height: 1;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.countdown-lbl {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #DFB76C;
+    margin-top: 4px;
+    font-weight: 600;
+}
+
+.countdown-divider {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: rgba(223, 183, 108, 0.7);
+    margin-bottom: 12px;
+}
+
+.countdown-footer-msg {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.92rem;
+    color: #F4E8E2;
+    font-weight: 500;
+}
+
+.pulse-icon {
+    color: #DFB76C;
+    animation: pulseHeart 1.8s infinite;
+}
+
+@keyframes pulseHeart {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+    100% { transform: scale(1); }
+}
+
+.hero-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Topbar Subtitle / Quote */
+.topbar-title-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.topbar-quote {
+    font-size: 0.78rem;
+    color: var(--neutral-600);
+    font-style: italic;
+    margin-top: 2px;
+}
+
+@media (max-width: 768px) {
+    .wedding-hero-card {
+        padding: 24px 16px;
+    }
+    .hero-couple-title {
+        font-size: 1.6rem;
+    }
+    .countdown-container {
+        gap: 6px;
+    }
+    .countdown-unit-card {
+        min-width: 58px;
+        padding: 8px 8px;
+    }
+    .countdown-val {
+        font-size: 1.4rem;
+    }
+    .countdown-divider {
+        font-size: 1.2rem;
+        margin-bottom: 8px;
+    }
+    .hero-quote-badge {
+        font-size: 0.76rem;
+        padding: 4px 12px;
+    }
+}
+
 
 

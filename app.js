@@ -80,6 +80,7 @@ const defaultOrcamentos = [
 
 // Global Application State
 let appState = {
+    weddingDate: '2028-09-16',
     valorGuardado: 0,
     categories: [...defaultCategories],
     convidados: [...defaultConvidados],
@@ -234,6 +235,7 @@ function loadState() {
             appState.convidados = parsed.convidados || [];
             appState.orcamentos = parsed.orcamentos || [];
             appState.valorGuardado = parsed.valorGuardado || 0;
+            appState.weddingDate = parsed.weddingDate || '2028-09-16';
         }
     } catch (e) {
         console.error('Erro ao carregar do localStorage', e);
@@ -246,10 +248,87 @@ function saveState() {
             categories: appState.categories,
             convidados: appState.convidados,
             orcamentos: appState.orcamentos,
-            valorGuardado: appState.valorGuardado
+            valorGuardado: appState.valorGuardado,
+            weddingDate: appState.weddingDate
         }));
     } catch (e) {
         console.error('Erro ao salvar no localStorage', e);
+    }
+}
+
+/* ==========================================================================
+   Wedding Date & Countdown Timer Module
+   ========================================================================== */
+function setWeddingDate(dateStr) {
+    if (!dateStr) return;
+    appState.weddingDate = dateStr;
+    saveState();
+    if (typeof dbSaveWeddingDate === 'function') {
+        dbSaveWeddingDate(dateStr);
+    }
+    renderWeddingDateUI();
+    updateCountdown();
+}
+
+function onCustomWeddingDateChange(dateStr) {
+    if (dateStr) {
+        setWeddingDate(dateStr);
+    }
+}
+
+function renderWeddingDateUI() {
+    const dateStr = appState.weddingDate || '2028-09-16';
+    const btn1 = document.getElementById('btnDate1');
+    const btn2 = document.getElementById('btnDate2');
+    const picker = document.getElementById('weddingDatePicker');
+
+    if (btn1) btn1.classList.toggle('active', dateStr === '2028-09-16');
+    if (btn2) btn2.classList.toggle('active', dateStr === '2028-10-14');
+    if (picker) picker.value = dateStr;
+}
+
+function updateCountdown() {
+    const targetStr = appState.weddingDate || '2028-09-16';
+    const parts = targetStr.split('-');
+    if (parts.length !== 3) return;
+
+    const year = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1;
+    const day = parseInt(parts[2], 10);
+
+    const targetDate = new Date(year, month, day, 0, 0, 0);
+    const now = new Date();
+    const diffMs = targetDate - now;
+
+    const elDays = document.getElementById('cdDays');
+    const elHours = document.getElementById('cdHours');
+    const elMinutes = document.getElementById('cdMinutes');
+    const elSeconds = document.getElementById('cdSeconds');
+    const elMsg = document.getElementById('countdownMsgText');
+
+    if (diffMs <= 0) {
+        if (elDays) elDays.textContent = '00';
+        if (elHours) elHours.textContent = '00';
+        if (elMinutes) elMinutes.textContent = '00';
+        if (elSeconds) elSeconds.textContent = '00';
+        if (elMsg) elMsg.textContent = '💍 O Grande Dia Chegou! Parabéns Eduarda & Guilherme!';
+        return;
+    }
+
+    const secondsTotal = Math.floor(diffMs / 1000);
+    const days = Math.floor(secondsTotal / (3600 * 24));
+    const hours = Math.floor((secondsTotal % (3600 * 24)) / 3600);
+    const minutes = Math.floor((secondsTotal % 3600) / 60);
+    const seconds = secondsTotal % 60;
+
+    if (elDays) elDays.textContent = String(days);
+    if (elHours) elHours.textContent = String(hours).padStart(2, '0');
+    if (elMinutes) elMinutes.textContent = String(minutes).padStart(2, '0');
+    if (elSeconds) elSeconds.textContent = String(seconds).padStart(2, '0');
+
+    if (elMsg) {
+        const formattedDate = `${String(day).padStart(2, '0')}/${String(month + 1).padStart(2, '0')}/${year}`;
+        elMsg.textContent = `Faltam ${days} dias para o nosso momento especial em ${formattedDate}!`;
     }
 }
 
@@ -1453,6 +1532,8 @@ function renderAll() {
     renderFechadosTable();
     renderDashboard();
     renderRelatorios();
+    renderWeddingDateUI();
+    updateCountdown();
 }
 
 /* ==========================================================================
@@ -1466,6 +1547,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initOrcamentos();
     initPagamentoModal();
     renderAll();
+
+    // Start live countdown timer update every second
+    setInterval(updateCountdown, 1000);
 
     // Firebase Firestore Realtime Sync Initialization
     if (typeof setupRealtimeListeners === 'function') {
@@ -1504,6 +1588,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     renderAll();
                 } else if (appState.valorGuardado > 0) {
                     dbSaveValorGuardado(appState.valorGuardado);
+                }
+            },
+            (cloudWeddingDate) => {
+                if (cloudWeddingDate) {
+                    appState.weddingDate = cloudWeddingDate;
+                    saveState();
+                    renderWeddingDateUI();
+                    updateCountdown();
+                } else if (appState.weddingDate) {
+                    dbSaveWeddingDate(appState.weddingDate);
                 }
             }
         );

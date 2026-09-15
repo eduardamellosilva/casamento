@@ -92,10 +92,20 @@ async function dbSaveValorGuardado(valor) {
     }
 }
 
+// Save Wedding Date to Cloud
+async function dbSaveWeddingDate(dateStr) {
+    if (!isFirebaseConnected || !rtdb) return;
+    try {
+        await rtdb.ref('config/weddingDate').set(dateStr);
+    } catch (e) {
+        console.error('Erro ao salvar Data do Casamento no Realtime Database:', e);
+    }
+}
+
 /* ==========================================================================
    Real-Time Data Listeners
    ========================================================================== */
-function setupRealtimeListeners(onConvidadosChange, onOrcamentosChange, onCategoriesChange, onValorGuardadoChange) {
+function setupRealtimeListeners(onConvidadosChange, onOrcamentosChange, onCategoriesChange, onValorGuardadoChange, onWeddingDateChange) {
     if (!isFirebaseConnected || !rtdb) return;
 
     // 1. Convidados Real-time listener
@@ -127,5 +137,13 @@ function setupRealtimeListeners(onConvidadosChange, onOrcamentosChange, onCatego
             onValorGuardadoChange(val);
         }
     }, err => console.error('Erro listener valor guardado:', err));
+
+    // 5. Wedding Date Real-time listener
+    rtdb.ref('config/weddingDate').on('value', (snapshot) => {
+        const val = snapshot.val();
+        if (onWeddingDateChange && val) {
+            onWeddingDateChange(val);
+        }
+    }, err => console.error('Erro listener data do casamento:', err));
 }
 

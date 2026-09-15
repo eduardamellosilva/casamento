@@ -95,7 +95,10 @@
                     <button class="btn-hamburger" id="btnHamburger" aria-label="Abrir Menu">
                         <i class="fa-solid fa-bars"></i>
                     </button>
-                    <h1 class="page-title" id="pageTitle">Visão Geral do Planejamento</h1>
+                    <div class="topbar-title-group">
+                        <h1 class="page-title" id="pageTitle">Visão Geral do Planejamento</h1>
+                        <div class="topbar-quote"><i class="fa-solid fa-heart text-accent"></i> Um passo de cada vez, até o nosso para sempre 🤍</div>
+                    </div>
                 </div>
 
                 <div class="topbar-right">
@@ -118,21 +121,82 @@
 
                 <!-- VIEW: VISÃO GERAL (DASHBOARD) -->
                 <section class="view-section active" id="dashboardView">
-                    <div class="welcome-card">
-                        <div class="welcome-text">
-                            <h2>Olá! Bem-vindo(a) ao seu Planejador 💍</h2>
-                            <p>Gerencie a lista de convidados, compare orçamentos de fornecedores e acompanhe seus contratos fechados em um só lugar.</p>
-                        </div>
-                        <div class="welcome-actions">
-                            <button class="btn-primary" onclick="switchView('convidadosView')">
-                                <i class="fa-solid fa-user-plus"></i> Add Convidados
-                            </button>
-                            <button class="btn-accent" onclick="switchView('orcamentosView')">
-                                <i class="fa-solid fa-plus"></i> Novo Orçamento
-                            </button>
-                            <button class="btn-secondary" onclick="switchView('relatoriosView')">
-                                <i class="fa-solid fa-chart-column"></i> Ver Relatórios
-                            </button>
+                    <!-- HERO BANNER COM FIRULAS: EDUARDA & GUILHERME + CONTAGEM REGRESSIVA -->
+                    <div class="wedding-hero-card mb-4">
+                        <div class="wedding-hero-glow"></div>
+                        <div class="wedding-hero-content">
+                            
+                            <!-- Phrase & Titles -->
+                            <div class="hero-header-row">
+                                <div class="hero-quote-badge">
+                                    <i class="fa-solid fa-sparkles text-gold"></i> Um passo de cada vez, até o nosso para sempre 🤍
+                                </div>
+                                <h1 class="hero-couple-title">💍 EDUARDA & GUILHERME</h1>
+                                <p class="hero-subtitle">Contagem regressiva rumo ao nosso Grande Dia</p>
+                            </div>
+
+                            <!-- Date Config / Selection -->
+                            <div class="wedding-date-config">
+                                <div class="date-config-label">
+                                    <i class="fa-regular fa-calendar-check"></i>
+                                    <span>Data do Casamento:</span>
+                                </div>
+                                <div class="date-options-wrapper">
+                                    <button type="button" class="btn-date-chip" id="btnDate1" onclick="setWeddingDate('2028-09-16')">
+                                        <i class="fa-solid fa-heart"></i> 16/09/2028
+                                    </button>
+                                    <button type="button" class="btn-date-chip" id="btnDate2" onclick="setWeddingDate('2028-10-14')">
+                                        <i class="fa-solid fa-heart"></i> 14/10/2028
+                                    </button>
+                                    <div class="custom-date-picker" title="Escolher outra data">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                        <input type="date" id="weddingDatePicker" class="date-input-field" onchange="onCustomWeddingDateChange(this.value)">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Countdown Displays -->
+                            <div class="countdown-container">
+                                <div class="countdown-unit-card">
+                                    <span class="countdown-val" id="cdDays">000</span>
+                                    <span class="countdown-lbl">Dias</span>
+                                </div>
+                                <div class="countdown-divider">:</div>
+                                <div class="countdown-unit-card">
+                                    <span class="countdown-val" id="cdHours">00</span>
+                                    <span class="countdown-lbl">Horas</span>
+                                </div>
+                                <div class="countdown-divider">:</div>
+                                <div class="countdown-unit-card">
+                                    <span class="countdown-val" id="cdMinutes">00</span>
+                                    <span class="countdown-lbl">Minutos</span>
+                                </div>
+                                <div class="countdown-divider">:</div>
+                                <div class="countdown-unit-card">
+                                    <span class="countdown-val" id="cdSeconds">00</span>
+                                    <span class="countdown-lbl">Segundos</span>
+                                </div>
+                            </div>
+
+                            <!-- Countdown Subtitle Message -->
+                            <div class="countdown-footer-msg">
+                                <i class="fa-solid fa-ring pulse-icon"></i>
+                                <span id="countdownMsgText">Carregando contagem regressiva...</span>
+                            </div>
+
+                            <!-- Quick Action Buttons -->
+                            <div class="hero-actions mt-2">
+                                <button class="btn-primary" onclick="switchView('convidadosView')">
+                                    <i class="fa-solid fa-user-plus"></i> Convidados
+                                </button>
+                                <button class="btn-accent" onclick="switchView('orcamentosView')">
+                                    <i class="fa-solid fa-plus"></i> Novo Orçamento
+                                </button>
+                                <button class="btn-secondary" onclick="switchView('relatoriosView')">
+                                    <i class="fa-solid fa-chart-column"></i> Ver Relatórios
+                                </button>
+                            </div>
+
                         </div>
                     </div>
 
