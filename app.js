@@ -1379,44 +1379,69 @@ function renderRelatorios() {
     const elMediaPorConvidado = document.getElementById('relatorioMediaPorConvidado');
     if (elMediaPorConvidado) elMediaPorConvidado.textContent = `Média: ${formatCurrency(mediaPorConvidado)} / pessoa`;
 
-    // 3. Category Breakdown Table
+    // 3. Category Breakdown Table (exibe apenas categorias utilizadas)
     const tbody = document.getElementById('tbodyRelatorioCategorias');
     const badgeCategorias = document.getElementById('relatorioCategoriasCount');
-    if (badgeCategorias) badgeCategorias.textContent = `${appState.categories.length} categorias`;
+
+    // Categorias que possuem pelo menos 1 proposta/orçamento cadastrado
+    const usedCategories = appState.categories.filter(cat =>
+        appState.orcamentos.some(o => o.servico === cat)
+    );
+    // Inclui também qualquer serviço presente nos orçamentos que porventura não esteja na lista principal
+    appState.orcamentos.forEach(o => {
+        if (o.servico && !usedCategories.includes(o.servico)) {
+            usedCategories.push(o.servico);
+        }
+    });
+
+    if (badgeCategorias) {
+        badgeCategorias.textContent = `${usedCategories.length} ${usedCategories.length === 1 ? 'categoria' : 'categorias'}`;
+    }
 
     if (tbody) {
         tbody.innerHTML = '';
-        appState.categories.forEach(cat => {
-            const orcs = appState.orcamentos.filter(o => o.servico === cat);
-            const propostasCount = orcs.length;
-            const contratadoItem = orcs.find(o => o.aprovado);
-
-            const valorAprovado = contratadoItem ? contratadoItem.valor : 0;
-            const valorPago = contratadoItem ? (contratadoItem.valorPago || 0) : 0;
-            const valorRestante = Math.max(0, valorAprovado - valorPago);
-
-            let statusBadge = '<span class="badge badge-warning">Em cotação</span>';
-            if (contratadoItem) {
-                if (valorPago >= valorAprovado) {
-                    statusBadge = '<span class="badge badge-success"><i class="fa-solid fa-check-double"></i> Quitado</span>';
-                } else {
-                    statusBadge = '<span class="badge badge-info"><i class="fa-solid fa-file-contract"></i> Fechado</span>';
-                }
-            } else if (propostasCount === 0) {
-                statusBadge = '<span class="badge badge-neutral">Sem propostas</span>';
-            }
-
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><strong>${cat}</strong></td>
-                <td class="text-center">${propostasCount} ${propostasCount === 1 ? 'proposta' : 'propostas'}</td>
-                <td class="text-center">${statusBadge}</td>
-                <td class="text-right ${valorAprovado > 0 ? 'text-primary font-bold' : 'text-muted'}">${valorAprovado > 0 ? formatCurrency(valorAprovado) : '-'}</td>
-                <td class="text-right ${valorPago > 0 ? 'text-success' : 'text-muted'}">${valorPago > 0 ? formatCurrency(valorPago) : '-'}</td>
-                <td class="text-right ${valorRestante > 0 ? 'text-danger' : 'text-muted'}">${valorRestante > 0 ? formatCurrency(valorRestante) : (valorAprovado > 0 ? 'Quitado' : '-')}</td>
+        if (usedCategories.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center text-muted p-4">
+                        <i class="fa-solid fa-folder-open mb-2" style="font-size: 1.5rem; display: block;"></i>
+                        Nenhuma categoria em uso (nenhum orçamento ou proposta cadastrada).
+                    </td>
+                </tr>
             `;
-            tbody.appendChild(tr);
-        });
+        } else {
+            usedCategories.forEach(cat => {
+                const orcs = appState.orcamentos.filter(o => o.servico === cat);
+                const propostasCount = orcs.length;
+                const contratadoItem = orcs.find(o => o.aprovado);
+
+                const valorAprovado = contratadoItem ? contratadoItem.valor : 0;
+                const valorPago = contratadoItem ? (contratadoItem.valorPago || 0) : 0;
+                const valorRestante = Math.max(0, valorAprovado - valorPago);
+
+                let statusBadge = '<span class="badge badge-warning">Em cotação</span>';
+                if (contratadoItem) {
+                    if (valorPago >= valorAprovado) {
+                        statusBadge = '<span class="badge badge-success"><i class="fa-solid fa-check-double"></i> Quitado</span>';
+                    } else {
+                        statusBadge = '<span class="badge badge-info"><i class="fa-solid fa-file-contract"></i> Fechado</span>';
+                    }
+                } else if (propostasCount === 0) {
+                    statusBadge = '<span class="badge badge-neutral">Sem propostas</span>';
+                }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${cat}</strong></td>
+                    <td class="text-center">${propostasCount} ${propostasCount === 1 ? 'proposta' : 'propostas'}</td>
+                    <td class="text-center">${statusBadge}</td>
+                    <td class="text-right ${valorAprovado > 0 ? 'text-primary font-bold' : 'text-muted'}">${valorAprovado > 0 ? formatCurrency(valorAprovado) : '-'}</td>
+                    <td class="text-right ${valorPago > 0 ? 'text-success' : 'text-muted'}">${valorPago > 0 ? formatCurrency(valorPago) : '-'}</td>
+                    <td class="text-right ${valorRestante > 0 ? 'text-danger' : 'text-muted'}">${valorRestante > 0 ? formatCurrency(valorRestante) : (valorAprovado > 0 ? 'Quitado' : '-')}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
     }
 }
 
