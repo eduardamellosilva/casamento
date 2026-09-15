@@ -289,12 +289,7 @@ function onCustomWeddingDateChange(dateStr) {
 
 function renderWeddingDateUI() {
     const dateStr = appState.weddingDate || '2028-09-16';
-    const btn1 = document.getElementById('btnDate1');
-    const btn2 = document.getElementById('btnDate2');
     const picker = document.getElementById('weddingDatePicker');
-
-    if (btn1) btn1.classList.toggle('active', dateStr === '2028-09-16');
-    if (btn2) btn2.classList.toggle('active', dateStr === '2028-10-14');
     if (picker) picker.value = dateStr;
 }
 

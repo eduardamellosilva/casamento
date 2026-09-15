@@ -2383,16 +2383,15 @@ textarea.form-control {
 
 /* Date Selector */
 .wedding-date-config {
-    display: flex;
-    flex-wrap: wrap;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
     background: rgba(0, 0, 0, 0.28);
     backdrop-filter: blur(10px);
-    padding: 8px 18px;
+    padding: 8px 20px;
     border-radius: var(--radius-full);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .date-config-label {
@@ -2404,56 +2403,27 @@ textarea.form-control {
     font-weight: 600;
 }
 
-.date-options-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.btn-date-chip {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: var(--white);
-    padding: 5px 14px;
-    border-radius: var(--radius-full);
-    font-size: 0.82rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.btn-date-chip:hover {
-    background: rgba(255, 255, 255, 0.25);
-    border-color: #DFB76C;
-}
-
-.btn-date-chip.active {
-    background: linear-gradient(135deg, #B8860B 0%, #DFB76C 100%);
-    color: #1A1A2E;
-    font-weight: 700;
-    border-color: #DFB76C;
-    box-shadow: 0 2px 10px rgba(223, 183, 108, 0.4);
-}
-
 .custom-date-picker {
     position: relative;
     display: flex;
     align-items: center;
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: var(--radius-full);
-    padding: 4px 10px;
+    padding: 5px 14px;
     color: var(--white);
+    transition: var(--transition);
+}
+
+.custom-date-picker:hover {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: #DFB76C;
 }
 
 .custom-date-picker i {
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     color: #DFB76C;
-    margin-right: 4px;
+    margin-right: 6px;
 }
 
 .date-input-field {
@@ -2461,7 +2431,8 @@ textarea.form-control {
     border: none;
     color: var(--white);
     font-family: inherit;
-    font-size: 0.82rem;
+    font-size: 0.85rem;
+    font-weight: 600;
     outline: none;
     cursor: pointer;
 }
