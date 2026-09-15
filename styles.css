@@ -2566,29 +2566,115 @@ textarea.form-control {
 }
 
 @media (max-width: 768px) {
+    .topbar-quote {
+        display: none !important;
+    }
+
     .wedding-hero-card {
-        padding: 24px 16px;
+        padding: 20px 14px;
+        border-radius: var(--radius-md);
     }
-    .hero-couple-title {
-        font-size: 1.6rem;
-    }
-    .countdown-container {
-        gap: 6px;
-    }
-    .countdown-unit-card {
-        min-width: 58px;
-        padding: 8px 8px;
-    }
-    .countdown-val {
-        font-size: 1.4rem;
-    }
-    .countdown-divider {
-        font-size: 1.2rem;
-        margin-bottom: 8px;
-    }
+
     .hero-quote-badge {
         font-size: 0.76rem;
         padding: 4px 12px;
+        text-align: center;
+        max-width: 100%;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    .hero-couple-title {
+        font-size: 1.35rem;
+        letter-spacing: 0.5px;
+        line-height: 1.25;
+        text-align: center;
+        margin: 2px 0 0 0;
+        white-space: normal;
+    }
+
+    .hero-subtitle {
+        font-size: 0.82rem;
+        margin-top: -2px;
+    }
+
+    .wedding-date-config {
+        width: 100%;
+        border-radius: var(--radius-md);
+        padding: 10px 10px;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .date-config-label {
+        font-size: 0.82rem;
+    }
+
+    .date-options-wrapper {
+        width: 100%;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .btn-date-chip {
+        padding: 5px 10px;
+        font-size: 0.78rem;
+    }
+
+    .custom-date-picker {
+        padding: 3px 8px;
+    }
+
+    .date-input-field {
+        font-size: 0.78rem;
+        max-width: 110px;
+    }
+
+    .countdown-container {
+        width: 100%;
+        gap: 3px;
+        justify-content: space-between;
+    }
+
+    .countdown-unit-card {
+        flex: 1;
+        min-width: 0;
+        padding: 8px 2px;
+        border-radius: 8px;
+    }
+
+    .countdown-val {
+        font-size: 1.25rem;
+    }
+
+    .countdown-lbl {
+        font-size: 0.6rem;
+        letter-spacing: 0.2px;
+        margin-top: 2px;
+    }
+
+    .countdown-divider {
+        font-size: 0.95rem;
+        margin-bottom: 6px;
+        color: rgba(223, 183, 108, 0.5);
+    }
+
+    .countdown-footer-msg {
+        flex-direction: column;
+        text-align: center;
+        gap: 4px;
+        font-size: 0.82rem;
+        padding: 0 4px;
+    }
+
+    .hero-actions {
+        width: 100%;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .hero-actions button {
+        width: 100%;
     }
 }
 
