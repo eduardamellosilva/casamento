@@ -1089,6 +1089,26 @@ textarea.form-control {
     color: #1565C0;
 }
 
+.badge-tipo {
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.badge-tipo.Adulto {
+    background: #E8F5E9;
+    color: #2E7D32;
+}
+
+.badge-tipo.Crianca, .badge-tipo.Criança {
+    background: #FFF3E0;
+    color: #E65100;
+}
+
 .badge-funcao {
     padding: 3px 8px;
     border-radius: var(--radius-sm);

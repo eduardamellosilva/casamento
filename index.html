@@ -261,8 +261,8 @@
                             <div class="metric-icon"><i class="fa-solid fa-users"></i></div>
                             <div class="metric-data">
                                 <span class="metric-title">Total de Convidados</span>
-                                <h3 class="metric-value" id="kpiTotalConvidados">0 pessoas</h3>
-                                <span class="metric-sub" id="kpiConvidadosBreakdown">Noiva: 0 | Noivo: 0</span>
+                                <h3 class="metric-value" id="kpiTotalConvidados">👥 0 convidados</h3>
+                                <span class="metric-sub" id="kpiConvidadosBreakdown">👤 0 adultos · 🧒 0 crianças</span>
                             </div>
                         </div>
 
@@ -320,6 +320,17 @@
                                         <select id="convidadoOrigem" class="form-control" required>
                                             <option value="Noiva">Noiva</option>
                                             <option value="Noivo">Noivo</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="convidadoTipo">Tipo *</label>
+                                    <div class="input-icon-wrapper">
+                                        <i class="fa-solid fa-users-between-lines"></i>
+                                        <select id="convidadoTipo" class="form-control" required>
+                                            <option value="Adulto">Adulto</option>
+                                            <option value="Criança">Criança</option>
                                         </select>
                                     </div>
                                 </div>
@@ -445,6 +456,7 @@
                                         <tr id="thRowConvidados">
                                             <th class="sortable" data-sort-key="nome" onclick="toggleConvidadoSort('nome')">Nome <i class="fa-solid fa-sort sort-icon"></i></th>
                                             <th class="sortable" data-sort-key="origem" onclick="toggleConvidadoSort('origem')">Origem <i class="fa-solid fa-sort sort-icon"></i></th>
+                                            <th class="sortable" data-sort-key="tipo" onclick="toggleConvidadoSort('tipo')">Tipo <i class="fa-solid fa-sort sort-icon"></i></th>
                                             <th class="sortable" data-sort-key="funcao" onclick="toggleConvidadoSort('funcao')">Papel / Função <i class="fa-solid fa-sort sort-icon"></i></th>
                                             <th class="sortable" data-sort-key="precoJantar" onclick="toggleConvidadoSort('precoJantar')">Valor Jantar (R$) <i class="fa-solid fa-sort sort-icon"></i></th>
                                             <th class="sortable" data-sort-key="observacao" onclick="toggleConvidadoSort('observacao')">Observação <i class="fa-solid fa-sort sort-icon"></i></th>
@@ -667,8 +679,8 @@
                             <div class="metric-icon"><i class="fa-solid fa-users"></i></div>
                             <div class="metric-data">
                                 <span class="metric-title">Total de Convidados</span>
-                                <h3 class="metric-value" id="dashTotalConvidados">0 pessoas</h3>
-                                <span class="metric-sub" id="dashConvidadosBreakdown">Noiva: 0 | Noivo: 0</span>
+                                <h3 class="metric-value" id="dashTotalConvidados">👥 0 convidados</h3>
+                                <span class="metric-sub" id="dashConvidadosBreakdown">👤 0 adultos · 🧒 0 crianças</span>
                             </div>
                         </div>
 

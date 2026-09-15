@@ -19,12 +19,12 @@ const defaultCategories = [
 ];
 
 const defaultConvidados = [
-    { id: '1', nome: 'Ana Paula Souza', origem: 'Noiva', funcao: 'Madrinha', precoJantar: 79.90, observacao: 'Vestido Rose' },
-    { id: '2', nome: 'Carlos Eduardo Santos', origem: 'Noivo', funcao: 'Padrinho', precoJantar: 79.90, observacao: 'Terno Grafite' },
-    { id: '3', nome: 'Lucas Souza', origem: 'Noiva', funcao: 'Pajem', precoJantar: 39.95, observacao: 'Meia-entrada (Criança)' },
-    { id: '4', nome: 'Beatriz Lima', origem: 'Noivo', funcao: 'Daminha', precoJantar: 0.00, observacao: 'Não Paga (Criança 3 anos)' },
-    { id: '5', nome: 'Sofia Alves', origem: 'Noiva', funcao: 'Florista', precoJantar: 39.95, observacao: 'Cesta de pétalas' },
-    { id: '6', nome: 'Roberto Oliveira', origem: 'Noivo', funcao: '', precoJantar: 79.90, observacao: 'Tio' }
+    { id: '1', nome: 'Ana Paula Souza', origem: 'Noiva', tipo: 'Adulto', funcao: 'Madrinha', precoJantar: 79.90, observacao: 'Vestido Rose' },
+    { id: '2', nome: 'Carlos Eduardo Santos', origem: 'Noivo', tipo: 'Adulto', funcao: 'Padrinho', precoJantar: 79.90, observacao: 'Terno Grafite' },
+    { id: '3', nome: 'Lucas Souza', origem: 'Noiva', tipo: 'Criança', funcao: 'Pajem', precoJantar: 39.95, observacao: 'Meia-entrada (Criança)' },
+    { id: '4', nome: 'Beatriz Lima', origem: 'Noivo', tipo: 'Criança', funcao: 'Daminha', precoJantar: 0.00, observacao: 'Não Paga (Criança 3 anos)' },
+    { id: '5', nome: 'Sofia Alves', origem: 'Noiva', tipo: 'Criança', funcao: 'Florista', precoJantar: 39.95, observacao: 'Cesta de pétalas' },
+    { id: '6', nome: 'Roberto Oliveira', origem: 'Noivo', tipo: 'Adulto', funcao: '', precoJantar: 79.90, observacao: 'Tio' }
 ];
 
 const defaultOrcamentos = [
@@ -505,6 +505,15 @@ function setJantarPreset(val) {
     }
 }
 
+function getConvidadoTipo(c) {
+    if (!c) return 'Adulto';
+    if (c.tipo === 'Adulto' || c.tipo === 'Criança') return c.tipo;
+    if (c.funcao === 'Pajem' || c.funcao === 'Daminha' || c.funcao === 'Florista') return 'Criança';
+    if (c.observacao && c.observacao.toLowerCase().includes('criança')) return 'Criança';
+    if (c.precoJantar !== undefined && c.precoJantar > 0 && c.precoJantar < 79.90) return 'Criança';
+    return 'Adulto';
+}
+
 function initConvidados() {
     const form = document.getElementById('formConvidado');
     form.addEventListener('submit', (e) => {
@@ -512,6 +521,8 @@ function initConvidados() {
         const id = document.getElementById('convidadoId').value;
         const nome = document.getElementById('convidadoNome').value.trim();
         const origem = document.getElementById('convidadoOrigem').value;
+        const tipoEl = document.getElementById('convidadoTipo');
+        const tipo = tipoEl ? tipoEl.value : 'Adulto';
         const funcao = document.getElementById('convidadoFuncao').value;
         const precoJantar = parseFloat(document.getElementById('convidadoPrecoJantar').value) || 0;
         const observacao = document.getElementById('convidadoObservacao').value.trim();
@@ -523,6 +534,7 @@ function initConvidados() {
             if (targetItem) {
                 targetItem.nome = nome;
                 targetItem.origem = origem;
+                targetItem.tipo = tipo;
                 targetItem.funcao = funcao;
                 targetItem.precoJantar = precoJantar;
                 targetItem.observacao = observacao;
@@ -533,6 +545,7 @@ function initConvidados() {
                 id: Date.now().toString(),
                 nome,
                 origem,
+                tipo,
                 funcao,
                 precoJantar,
                 observacao
@@ -558,6 +571,8 @@ function resetConvidadoForm() {
     document.getElementById('formConvidado').reset();
     document.getElementById('convidadoId').value = '';
     document.getElementById('convidadoFuncao').value = '';
+    const tipoEl = document.getElementById('convidadoTipo');
+    if (tipoEl) tipoEl.value = 'Adulto';
     document.getElementById('convidadoFormTitle').innerHTML = '<i class="fa-solid fa-user-plus"></i> Novo Convidado';
     document.getElementById('btnSalvarConvidado').innerHTML = '<i class="fa-solid fa-check"></i> Salvar Convidado';
     document.getElementById('btnCancelarConvidado').classList.add('hidden');
@@ -575,6 +590,8 @@ function editConvidado(id) {
     document.getElementById('convidadoId').value = item.id;
     document.getElementById('convidadoNome').value = item.nome;
     document.getElementById('convidadoOrigem').value = item.origem;
+    const tipoEl = document.getElementById('convidadoTipo');
+    if (tipoEl) tipoEl.value = getConvidadoTipo(item);
     document.getElementById('convidadoFuncao').value = item.funcao || '';
     document.getElementById('convidadoPrecoJantar').value = item.precoJantar;
     document.getElementById('convidadoObservacao').value = item.observacao || '';
@@ -656,6 +673,8 @@ function renderConvidadosTable() {
     const countTodos = appState.convidados.length;
     const countNoiva = appState.convidados.filter(c => c.origem === 'Noiva').length;
     const countNoivo = appState.convidados.filter(c => c.origem === 'Noivo').length;
+    const countAdultos = appState.convidados.filter(c => getConvidadoTipo(c) === 'Adulto').length;
+    const countCriancas = appState.convidados.filter(c => getConvidadoTipo(c) === 'Criança').length;
 
     const totalJantarNoivaAll = appState.convidados.filter(c => c.origem === 'Noiva').reduce((acc, c) => acc + c.precoJantar, 0);
     const totalJantarNoivoAll = appState.convidados.filter(c => c.origem === 'Noivo').reduce((acc, c) => acc + c.precoJantar, 0);
@@ -663,9 +682,9 @@ function renderConvidadosTable() {
 
     // Update Top KPI Cards
     const elTotalConvidados = document.getElementById('kpiTotalConvidados');
-    if (elTotalConvidados) elTotalConvidados.textContent = `${countTodos} pessoas`;
+    if (elTotalConvidados) elTotalConvidados.textContent = `👥 ${countTodos} ${countTodos === 1 ? 'convidado' : 'convidados'}`;
     const elBreakdown = document.getElementById('kpiConvidadosBreakdown');
-    if (elBreakdown) elBreakdown.textContent = `Noiva: ${countNoiva} | Noivo: ${countNoivo}`;
+    if (elBreakdown) elBreakdown.textContent = `👤 ${countAdultos} ${countAdultos === 1 ? 'adulto' : 'adultos'} · 🧒 ${countCriancas} ${countCriancas === 1 ? 'criança' : 'crianças'}`;
 
     const elNoivaCount = document.getElementById('kpiTotalNoivaCount');
     if (elNoivaCount) elNoivaCount.textContent = `${countNoiva} convidados`;
@@ -701,7 +720,7 @@ function renderConvidadosTable() {
         if (appState.convidadoRoleFilter === 'padrinhos') {
             matchesRole = c.funcao === 'Padrinho' || c.funcao === 'Madrinha';
         } else if (appState.convidadoRoleFilter === 'criancas') {
-            matchesRole = c.funcao === 'Pajem' || c.funcao === 'Daminha' || c.funcao === 'Florista';
+            matchesRole = c.funcao === 'Pajem' || c.funcao === 'Daminha' || c.funcao === 'Florista' || getConvidadoTipo(c) === 'Criança';
         } else if (appState.convidadoRoleFilter === 'familia') {
             matchesRole = c.funcao && (c.funcao.includes('Mãe') || c.funcao.includes('Pai'));
         } else if (appState.convidadoRoleFilter === 'comum') {
@@ -709,6 +728,7 @@ function renderConvidadosTable() {
         }
 
         const matchesSearch = c.nome.toLowerCase().includes(search) ||
+            getConvidadoTipo(c).toLowerCase().includes(search) ||
             (c.funcao && c.funcao.toLowerCase().includes(search)) ||
             (c.observacao && c.observacao.toLowerCase().includes(search));
         return matchesFilter && matchesRole && matchesSearch;
@@ -716,7 +736,11 @@ function renderConvidadosTable() {
 
     // Apply Column Sorting & Update Header Icons
     updateSortIcons('thRowConvidados', appState.convidadoSort.key, appState.convidadoSort.dir);
-    sortItems(filtered, appState.convidadoSort.key, appState.convidadoSort.dir);
+    
+    // Virtual sort key helper for tipo
+    const listForSorting = filtered.map(c => ({ ...c, tipo: getConvidadoTipo(c) }));
+    sortItems(listForSorting, appState.convidadoSort.key, appState.convidadoSort.dir);
+    filtered = listForSorting;
 
     // Summary bar math for currently displayed subset
     const totalPessoas = filtered.length;
@@ -741,7 +765,7 @@ function renderConvidadosTable() {
         if (filtered.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="6" class="empty-state">
+                    <td colspan="7" class="empty-state">
                         <i class="fa-solid fa-users-slash"></i>
                         <p>Nenhum convidado encontrado.</p>
                     </td>
@@ -754,10 +778,15 @@ function renderConvidadosTable() {
             const tr = document.createElement('tr');
             const badgeFuncaoClass = c.funcao ? c.funcao.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-') : 'comum';
             const funcaoLabel = c.funcao ? c.funcao : 'Convidado(a)';
+            const tipoVal = getConvidadoTipo(c);
+            const tipoBadge = tipoVal === 'Criança'
+                ? '<span class="badge-tipo Crianca">🧒 Criança</span>'
+                : '<span class="badge-tipo Adulto">👤 Adulto</span>';
 
             tr.innerHTML = `
                 <td><strong>${c.nome}</strong></td>
                 <td><span class="badge-origem ${c.origem}">${c.origem === 'Noiva' ? '👰 Noiva' : '🤵 Noivo'}</span></td>
+                <td>${tipoBadge}</td>
                 <td><span class="badge-funcao ${badgeFuncaoClass}">${getRoleIcon(c.funcao)} ${funcaoLabel}</span></td>
                 <td><strong>${c.precoJantar === 0 ? '<span class="text-success">Gratuito</span>' : formatCurrency(c.precoJantar)}</strong></td>
                 <td>${c.observacao || '<span class="text-muted">-</span>'}</td>
@@ -803,7 +832,10 @@ function renderConvidadosCards(filtered) {
                     <div class="avatar-circle ${c.origem}">${initials}</div>
                     <div>
                         <h4 class="item-card-title">${c.nome}</h4>
-                        <span class="badge-origem ${c.origem}">${c.origem === 'Noiva' ? '👰 Noiva' : '🤵 Noivo'}</span>
+                        <div style="display: flex; gap: 4px; align-items: center; margin-top: 4px; flex-wrap: wrap;">
+                            <span class="badge-origem ${c.origem}">${c.origem === 'Noiva' ? '👰 Noiva' : '🤵 Noivo'}</span>
+                            <span class="badge-tipo ${getConvidadoTipo(c)}">${getConvidadoTipo(c) === 'Criança' ? '🧒 Criança' : '👤 Adulto'}</span>
+                        </div>
                     </div>
                 </div>
                 <span class="badge-funcao ${badgeFuncaoClass}">${roleIcon} ${funcaoLabel}</span>
@@ -1331,11 +1363,14 @@ function renderDashboard() {
     document.getElementById('badgeFechadosCount').textContent = fechadosCount;
 
     // Convidados Totals
-    const noivaConv = appState.convidados.filter(c => c.origem === 'Noiva');
-    const noivoConv = appState.convidados.filter(c => c.origem === 'Noivo');
+    const countAdultos = appState.convidados.filter(c => getConvidadoTipo(c) === 'Adulto').length;
+    const countCriancas = appState.convidados.filter(c => getConvidadoTipo(c) === 'Criança').length;
 
-    document.getElementById('dashTotalConvidados').textContent = `${appState.convidados.length} pessoas`;
-    document.getElementById('dashConvidadosBreakdown').textContent = `Noiva: ${noivaConv.length} | Noivo: ${noivoConv.length}`;
+    const elDashTotalConv = document.getElementById('dashTotalConvidados');
+    if (elDashTotalConv) elDashTotalConv.textContent = `👥 ${appState.convidados.length} ${appState.convidados.length === 1 ? 'convidado' : 'convidados'}`;
+
+    const elDashBreakdown = document.getElementById('dashConvidadosBreakdown');
+    if (elDashBreakdown) elDashBreakdown.textContent = `👤 ${countAdultos} ${countAdultos === 1 ? 'adulto' : 'adultos'} · 🧒 ${countCriancas} ${countCriancas === 1 ? 'criança' : 'crianças'}`;
 
     // Orcamentos Totals
     const pendentesVal = appState.orcamentos.filter(o => !o.aprovado).reduce((acc, o) => acc + o.valor, 0);
@@ -1457,8 +1492,11 @@ function renderRelatorios() {
 
     const elCustoTotalJantar = document.getElementById('relatorioCustoTotalJantar');
     if (elCustoTotalJantar) elCustoTotalJantar.textContent = formatCurrency(totalJantar);
+
+    const countAdultos = appState.convidados.filter(c => getConvidadoTipo(c) === 'Adulto').length;
+    const countCriancas = appState.convidados.filter(c => getConvidadoTipo(c) === 'Criança').length;
     const elMediaPorConvidado = document.getElementById('relatorioMediaPorConvidado');
-    if (elMediaPorConvidado) elMediaPorConvidado.textContent = `Média: ${formatCurrency(mediaPorConvidado)} / pessoa`;
+    if (elMediaPorConvidado) elMediaPorConvidado.textContent = `👤 ${countAdultos} adultos · 🧒 ${countCriancas} crianças | Média: ${formatCurrency(mediaPorConvidado)} / pessoa`;
 
     // 3. Category Breakdown Table (exibe apenas categorias utilizadas)
     const tbody = document.getElementById('tbodyRelatorioCategorias');
