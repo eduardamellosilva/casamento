@@ -1109,6 +1109,11 @@ textarea.form-control {
     color: #E65100;
 }
 
+.badge-tipo.Crianca-nao-pagante, .badge-tipo.Criança-não-pagante {
+    background: #E0F7FA;
+    color: #00838F;
+}
+
 .badge-funcao {
     padding: 3px 8px;
     border-radius: var(--radius-sm);

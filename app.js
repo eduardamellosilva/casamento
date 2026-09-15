@@ -22,7 +22,7 @@ const defaultConvidados = [
     { id: '1', nome: 'Ana Paula Souza', origem: 'Noiva', tipo: 'Adulto', funcao: 'Madrinha', precoJantar: 79.90, observacao: 'Vestido Rose' },
     { id: '2', nome: 'Carlos Eduardo Santos', origem: 'Noivo', tipo: 'Adulto', funcao: 'Padrinho', precoJantar: 79.90, observacao: 'Terno Grafite' },
     { id: '3', nome: 'Lucas Souza', origem: 'Noiva', tipo: 'Criança', funcao: 'Pajem', precoJantar: 39.95, observacao: 'Meia-entrada (Criança)' },
-    { id: '4', nome: 'Beatriz Lima', origem: 'Noivo', tipo: 'Criança', funcao: 'Daminha', precoJantar: 0.00, observacao: 'Não Paga (Criança 3 anos)' },
+    { id: '4', nome: 'Beatriz Lima', origem: 'Noivo', tipo: 'Criança não pagante', funcao: 'Daminha', precoJantar: 0.00, observacao: 'Não Paga (Criança 3 anos)' },
     { id: '5', nome: 'Sofia Alves', origem: 'Noiva', tipo: 'Criança', funcao: 'Florista', precoJantar: 39.95, observacao: 'Cesta de pétalas' },
     { id: '6', nome: 'Roberto Oliveira', origem: 'Noivo', tipo: 'Adulto', funcao: '', precoJantar: 79.90, observacao: 'Tio' }
 ];
@@ -503,15 +503,50 @@ function setJantarPreset(val) {
         input.value = val;
         input.focus();
     }
+    const tipoEl = document.getElementById('convidadoTipo');
+    if (tipoEl) {
+        if (val === 0) {
+            tipoEl.value = 'Criança não pagante';
+        } else if (val > 0 && val < 79.90 && tipoEl.value === 'Adulto') {
+            tipoEl.value = 'Criança';
+        }
+    }
 }
 
 function getConvidadoTipo(c) {
     if (!c) return 'Adulto';
-    if (c.tipo === 'Adulto' || c.tipo === 'Criança') return c.tipo;
+    if (c.tipo === 'Adulto' || c.tipo === 'Criança' || c.tipo === 'Criança não pagante') return c.tipo;
+    if (c.precoJantar === 0 && (c.funcao === 'Pajem' || c.funcao === 'Daminha' || c.funcao === 'Florista' || (c.observacao && c.observacao.toLowerCase().includes('criança')))) {
+        return 'Criança não pagante';
+    }
     if (c.funcao === 'Pajem' || c.funcao === 'Daminha' || c.funcao === 'Florista') return 'Criança';
     if (c.observacao && c.observacao.toLowerCase().includes('criança')) return 'Criança';
     if (c.precoJantar !== undefined && c.precoJantar > 0 && c.precoJantar < 79.90) return 'Criança';
     return 'Adulto';
+}
+
+function getTipoBadgeHtml(c) {
+    const tipoVal = getConvidadoTipo(c);
+    if (tipoVal === 'Criança não pagante') {
+        return '<span class="badge-tipo Crianca-nao-pagante">👶 Criança não pagante</span>';
+    } else if (tipoVal === 'Criança') {
+        return '<span class="badge-tipo Crianca">🧒 Criança</span>';
+    } else {
+        return '<span class="badge-tipo Adulto">👤 Adulto</span>';
+    }
+}
+
+function getConvidadosBreakdownString(convidados) {
+    const countAdultos = convidados.filter(c => getConvidadoTipo(c) === 'Adulto').length;
+    const countCriancas = convidados.filter(c => getConvidadoTipo(c) === 'Criança').length;
+    const countCriancasNP = convidados.filter(c => getConvidadoTipo(c) === 'Criança não pagante').length;
+
+    let parts = [`👤 ${countAdultos} ${countAdultos === 1 ? 'adulto' : 'adultos'}`];
+    parts.push(`🧒 ${countCriancas} ${countCriancas === 1 ? 'criança' : 'crianças'}`);
+    if (countCriancasNP > 0) {
+        parts.push(`👶 ${countCriancasNP} não ${countCriancasNP === 1 ? 'pagante' : 'pagantes'}`);
+    }
+    return parts.join(' · ');
 }
 
 function initConvidados() {
@@ -684,7 +719,7 @@ function renderConvidadosTable() {
     const elTotalConvidados = document.getElementById('kpiTotalConvidados');
     if (elTotalConvidados) elTotalConvidados.textContent = `👥 ${countTodos} ${countTodos === 1 ? 'convidado' : 'convidados'}`;
     const elBreakdown = document.getElementById('kpiConvidadosBreakdown');
-    if (elBreakdown) elBreakdown.textContent = `👤 ${countAdultos} ${countAdultos === 1 ? 'adulto' : 'adultos'} · 🧒 ${countCriancas} ${countCriancas === 1 ? 'criança' : 'crianças'}`;
+    if (elBreakdown) elBreakdown.textContent = getConvidadosBreakdownString(appState.convidados);
 
     const elNoivaCount = document.getElementById('kpiTotalNoivaCount');
     if (elNoivaCount) elNoivaCount.textContent = `${countNoiva} convidados`;
@@ -720,7 +755,8 @@ function renderConvidadosTable() {
         if (appState.convidadoRoleFilter === 'padrinhos') {
             matchesRole = c.funcao === 'Padrinho' || c.funcao === 'Madrinha';
         } else if (appState.convidadoRoleFilter === 'criancas') {
-            matchesRole = c.funcao === 'Pajem' || c.funcao === 'Daminha' || c.funcao === 'Florista' || getConvidadoTipo(c) === 'Criança';
+            const t = getConvidadoTipo(c);
+            matchesRole = c.funcao === 'Pajem' || c.funcao === 'Daminha' || c.funcao === 'Florista' || t === 'Criança' || t === 'Criança não pagante';
         } else if (appState.convidadoRoleFilter === 'familia') {
             matchesRole = c.funcao && (c.funcao.includes('Mãe') || c.funcao.includes('Pai'));
         } else if (appState.convidadoRoleFilter === 'comum') {
@@ -778,10 +814,7 @@ function renderConvidadosTable() {
             const tr = document.createElement('tr');
             const badgeFuncaoClass = c.funcao ? c.funcao.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-') : 'comum';
             const funcaoLabel = c.funcao ? c.funcao : 'Convidado(a)';
-            const tipoVal = getConvidadoTipo(c);
-            const tipoBadge = tipoVal === 'Criança'
-                ? '<span class="badge-tipo Crianca">🧒 Criança</span>'
-                : '<span class="badge-tipo Adulto">👤 Adulto</span>';
+            const tipoBadge = getTipoBadgeHtml(c);
 
             tr.innerHTML = `
                 <td><strong>${c.nome}</strong></td>
@@ -834,7 +867,7 @@ function renderConvidadosCards(filtered) {
                         <h4 class="item-card-title">${c.nome}</h4>
                         <div style="display: flex; gap: 4px; align-items: center; margin-top: 4px; flex-wrap: wrap;">
                             <span class="badge-origem ${c.origem}">${c.origem === 'Noiva' ? '👰 Noiva' : '🤵 Noivo'}</span>
-                            <span class="badge-tipo ${getConvidadoTipo(c)}">${getConvidadoTipo(c) === 'Criança' ? '🧒 Criança' : '👤 Adulto'}</span>
+                            ${getTipoBadgeHtml(c)}
                         </div>
                     </div>
                 </div>
@@ -1363,14 +1396,11 @@ function renderDashboard() {
     document.getElementById('badgeFechadosCount').textContent = fechadosCount;
 
     // Convidados Totals
-    const countAdultos = appState.convidados.filter(c => getConvidadoTipo(c) === 'Adulto').length;
-    const countCriancas = appState.convidados.filter(c => getConvidadoTipo(c) === 'Criança').length;
-
     const elDashTotalConv = document.getElementById('dashTotalConvidados');
     if (elDashTotalConv) elDashTotalConv.textContent = `👥 ${appState.convidados.length} ${appState.convidados.length === 1 ? 'convidado' : 'convidados'}`;
 
     const elDashBreakdown = document.getElementById('dashConvidadosBreakdown');
-    if (elDashBreakdown) elDashBreakdown.textContent = `👤 ${countAdultos} ${countAdultos === 1 ? 'adulto' : 'adultos'} · 🧒 ${countCriancas} ${countCriancas === 1 ? 'criança' : 'crianças'}`;
+    if (elDashBreakdown) elDashBreakdown.textContent = getConvidadosBreakdownString(appState.convidados);
 
     // Orcamentos Totals
     const pendentesVal = appState.orcamentos.filter(o => !o.aprovado).reduce((acc, o) => acc + o.valor, 0);
@@ -1493,10 +1523,8 @@ function renderRelatorios() {
     const elCustoTotalJantar = document.getElementById('relatorioCustoTotalJantar');
     if (elCustoTotalJantar) elCustoTotalJantar.textContent = formatCurrency(totalJantar);
 
-    const countAdultos = appState.convidados.filter(c => getConvidadoTipo(c) === 'Adulto').length;
-    const countCriancas = appState.convidados.filter(c => getConvidadoTipo(c) === 'Criança').length;
     const elMediaPorConvidado = document.getElementById('relatorioMediaPorConvidado');
-    if (elMediaPorConvidado) elMediaPorConvidado.textContent = `👤 ${countAdultos} adultos · 🧒 ${countCriancas} crianças | Média: ${formatCurrency(mediaPorConvidado)} / pessoa`;
+    if (elMediaPorConvidado) elMediaPorConvidado.textContent = `${getConvidadosBreakdownString(appState.convidados)} | Média: ${formatCurrency(mediaPorConvidado)} / pessoa`;
 
     // 3. Category Breakdown Table (exibe apenas categorias utilizadas)
     const tbody = document.getElementById('tbodyRelatorioCategorias');
