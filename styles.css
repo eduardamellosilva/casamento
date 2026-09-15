@@ -2389,7 +2389,7 @@ textarea.form-control {
     border-radius: var(--radius-md);
     padding: 14px 22px;
     max-width: 640px;
-    margin: 4px auto 6px auto;
+    margin: 12px auto 0 auto;
     position: relative;
     text-align: center;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);

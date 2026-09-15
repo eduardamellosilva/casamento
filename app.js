@@ -331,11 +331,6 @@ function updateCountdown() {
     if (elHours) elHours.textContent = String(hours).padStart(2, '0');
     if (elMinutes) elMinutes.textContent = String(minutes).padStart(2, '0');
     if (elSeconds) elSeconds.textContent = String(seconds).padStart(2, '0');
-
-    if (elMsg) {
-        const formattedDate = `${String(day).padStart(2, '0')}/${String(month + 1).padStart(2, '0')}/${year}`;
-        elMsg.textContent = `Faltam ${days} dias para o nosso momento especial em ${formattedDate}!`;
-    }
 }
 
 function salvarValorGuardado() {
