@@ -85,6 +85,15 @@ let appState = {
     categories: [...defaultCategories],
     convidados: [...defaultConvidados],
     orcamentos: [...defaultOrcamentos],
+    compromissos: [
+        { id: 'comp_1', titulo: 'Degustação do Menu do Buffet', data: '2026-09-25', hora: '15:00', categoria: 'Degustação', local: 'Espaço Jardim Real', observacao: 'Levar lista preliminar de convidados.', concluido: false },
+        { id: 'comp_2', titulo: 'Reunião com Fotografia', data: '2026-10-02', hora: '19:30', categoria: 'Reunião', local: 'Google Meet', observacao: 'Alinhar fotos pré-wedding.', concluido: false },
+        { id: 'comp_3', titulo: 'Prova do Vestido de Noiva', data: '2026-10-18', hora: '10:00', categoria: 'Prova de Roupa', local: 'Ateliê Maison Noivas', observacao: 'Trazer os sapatos e acessórios.', concluido: false }
+    ],
+    calendarYear: new Date().getFullYear(),
+    calendarMonth: new Date().getMonth(),
+    selectedCalendarDate: null,
+    compromissoFilter: 'todos',
     currentView: 'dashboardView',
     convidadoFilter: 'todos',
     convidadoRoleFilter: 'todos',
@@ -236,6 +245,7 @@ function loadState() {
             appState.orcamentos = parsed.orcamentos || [];
             appState.valorGuardado = parsed.valorGuardado || 0;
             appState.weddingDate = parsed.weddingDate || '2028-09-16';
+            appState.compromissos = parsed.compromissos && parsed.compromissos.length ? parsed.compromissos : appState.compromissos;
         }
     } catch (e) {
         console.error('Erro ao carregar do localStorage', e);
@@ -249,7 +259,8 @@ function saveState() {
             convidados: appState.convidados,
             orcamentos: appState.orcamentos,
             valorGuardado: appState.valorGuardado,
-            weddingDate: appState.weddingDate
+            weddingDate: appState.weddingDate,
+            compromissos: appState.compromissos
         }));
     } catch (e) {
         console.error('Erro ao salvar no localStorage', e);
@@ -403,7 +414,8 @@ function switchView(viewId) {
         'convidadosView': '1. Gestão de Convidados & Jantar',
         'orcamentosView': '2. Orçamentos & Propostas',
         'servicosFechadosView': '3. Serviços & Contratos Fechados',
-        'relatoriosView': '4. Relatórios & Painel Financeiro'
+        'relatoriosView': '4. Relatórios & Painel Financeiro',
+        'calendarioView': '5. Agenda & Calendário de Compromissos'
     };
     document.getElementById('pageTitle').textContent = titles[viewId] || 'Planejamento de Casamento';
 
@@ -1524,6 +1536,376 @@ function renderRelatorios() {
     }
 }
 
+/* ==========================================================================
+   INTERACTIVE CALENDAR & AGENDA MODULE
+   ========================================================================== */
+function changeCalendarMonth(delta) {
+    let m = appState.calendarMonth + delta;
+    let y = appState.calendarYear;
+    if (m < 0) {
+        m = 11;
+        y--;
+    } else if (m > 11) {
+        m = 0;
+        y++;
+    }
+    appState.calendarMonth = m;
+    appState.calendarYear = y;
+    renderCalendar();
+}
+
+function setCalendarToday() {
+    const now = new Date();
+    appState.calendarMonth = now.getMonth();
+    appState.calendarYear = now.getFullYear();
+    const monthStr = String(now.getMonth() + 1).padStart(2, '0');
+    const dayStr = String(now.getDate()).padStart(2, '0');
+    appState.selectedCalendarDate = `${now.getFullYear()}-${monthStr}-${dayStr}`;
+    renderCalendar();
+}
+
+function selectCalendarDay(dateKey) {
+    appState.selectedCalendarDate = (appState.selectedCalendarDate === dateKey) ? null : dateKey;
+    renderCalendar();
+}
+
+function setCompromissoFilter(filter) {
+    appState.compromissoFilter = filter;
+    const btnAll = document.getElementById('tabCompAll');
+    const btnPending = document.getElementById('tabCompPending');
+    const btnDone = document.getElementById('tabCompDone');
+    if (btnAll) btnAll.classList.toggle('active', filter === 'todos');
+    if (btnPending) btnPending.classList.toggle('active', filter === 'pendentes');
+    if (btnDone) btnDone.classList.toggle('active', filter === 'concluidos');
+    renderCompromissosList();
+}
+
+function getCategoryColorClass(cat) {
+    switch (cat) {
+        case 'Degustação': return 'degustacao';
+        case 'Reunião': return 'reuniao';
+        case 'Pagamento': return 'pagamento';
+        case 'Prova de Roupa': return 'prova';
+        case 'Visita Técnica': return 'visita';
+        case 'Fotos / Ensaio': return 'fotos';
+        default: return '';
+    }
+}
+
+function getCategoryBadgeHtml(cat) {
+    let colorStyle = 'background: #E2E8F0; color: #334155;';
+    switch (cat) {
+        case 'Degustação': colorStyle = 'background: #F4E8E2; color: #8B4513;'; break;
+        case 'Reunião': colorStyle = 'background: #EFE6F0; color: #6B4E71;'; break;
+        case 'Pagamento': colorStyle = 'background: #E8F5E9; color: #2E7D32;'; break;
+        case 'Prova de Roupa': colorStyle = 'background: #FCE4EC; color: #C2185B;'; break;
+        case 'Visita Técnica': colorStyle = 'background: #FFF4E5; color: #ED6C02;'; break;
+        case 'Fotos / Ensaio': colorStyle = 'background: #E0F2FE; color: #0284C7;'; break;
+    }
+    return `<span class="comp-category-badge" style="${colorStyle}">${cat || 'Compromisso'}</span>`;
+}
+
+function renderCalendar() {
+    const y = appState.calendarYear;
+    const m = appState.calendarMonth;
+
+    const monthNames = [
+        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    ];
+
+    const label = document.getElementById('calendarMonthLabel');
+    if (label) label.textContent = `${monthNames[m]} de ${y}`;
+
+    const grid = document.getElementById('calendarDaysGrid');
+    if (!grid) return;
+
+    grid.innerHTML = '';
+
+    const firstDayIndex = new Date(y, m, 1).getDay();
+    const totalDays = new Date(y, m + 1, 0).getDate();
+    const prevMonthDays = new Date(y, m, 0).getDate();
+
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+    // Days from previous month
+    for (let i = firstDayIndex - 1; i >= 0; i--) {
+        const d = prevMonthDays - i;
+        const cell = document.createElement('div');
+        cell.className = 'calendar-day-cell disabled-day';
+        cell.innerHTML = `<span class="day-number">${d}</span>`;
+        grid.appendChild(cell);
+    }
+
+    // Days of current month
+    for (let d = 1; d <= totalDays; d++) {
+        const monthStr = String(m + 1).padStart(2, '0');
+        const dayStr = String(d).padStart(2, '0');
+        const dateKey = `${y}-${monthStr}-${dayStr}`;
+
+        const eventsOnDay = appState.compromissos.filter(c => c.data === dateKey);
+        const isToday = dateKey === todayStr;
+        const isSelected = dateKey === appState.selectedCalendarDate;
+
+        const cell = document.createElement('div');
+        cell.className = `calendar-day-cell ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''} ${eventsOnDay.length ? 'has-events' : ''}`;
+
+        let dotsHtml = '';
+        if (eventsOnDay.length > 0) {
+            dotsHtml = `<div class="event-dots">`;
+            eventsOnDay.slice(0, 3).forEach(ev => {
+                const catColor = getCategoryColorClass(ev.categoria);
+                dotsHtml += `<span class="event-dot ${catColor}" title="${ev.titulo}"></span>`;
+            });
+            if (eventsOnDay.length > 3) {
+                dotsHtml += `<span class="event-dot-more">+${eventsOnDay.length - 3}</span>`;
+            }
+            dotsHtml += `</div>`;
+        }
+
+        cell.innerHTML = `
+            <span class="day-number">${d}</span>
+            ${dotsHtml}
+        `;
+
+        cell.addEventListener('click', () => selectCalendarDay(dateKey));
+        grid.appendChild(cell);
+    }
+
+    // Trailing days from next month
+    const totalCells = firstDayIndex + totalDays;
+    const trailingCells = (totalCells % 7 === 0) ? 0 : 7 - (totalCells % 7);
+    for (let i = 1; i <= trailingCells; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'calendar-day-cell disabled-day';
+        cell.innerHTML = `<span class="day-number">${i}</span>`;
+        grid.appendChild(cell);
+    }
+
+    renderCompromissosList();
+}
+
+function renderCompromissosList() {
+    const container = document.getElementById('compromissosListContainer');
+    const titleEl = document.getElementById('compromissosSectionTitle');
+    if (!container) return;
+
+    let items = [...appState.compromissos];
+
+    if (appState.selectedCalendarDate) {
+        const parts = appState.selectedCalendarDate.split('-');
+        const formatted = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        if (titleEl) {
+            titleEl.innerHTML = `<i class="fa-solid fa-calendar-day text-accent"></i> Compromissos em ${formatted} <button class="btn-text btn-sm ml-2" onclick="selectCalendarDay(null)">Ver Todos</button>`;
+        }
+        items = items.filter(c => c.data === appState.selectedCalendarDate);
+    } else {
+        if (titleEl) {
+            titleEl.innerHTML = `<i class="fa-solid fa-clock text-accent"></i> Próximos Compromissos`;
+        }
+    }
+
+    if (appState.compromissoFilter === 'pendentes') {
+        items = items.filter(c => !c.concluido);
+    } else if (appState.compromissoFilter === 'concluidos') {
+        items = items.filter(c => c.concluido);
+    }
+
+    items.sort((a, b) => {
+        const dateA = new Date(`${a.data}T${a.hora || '00:00'}`);
+        const dateB = new Date(`${b.data}T${b.hora || '00:00'}`);
+        return dateA - dateB;
+    });
+
+    container.innerHTML = '';
+
+    if (items.length === 0) {
+        container.innerHTML = `
+            <div class="p-4 text-center text-muted">
+                <i class="fa-solid fa-calendar-xmark mb-2" style="font-size: 1.8rem; display: block;"></i>
+                Nenhum compromisso cadastrado.
+                <div class="mt-2">
+                    <button type="button" class="btn-primary btn-sm" onclick="openModalCompromisso(null, appState.selectedCalendarDate)">+ Agendar compromisso</button>
+                </div>
+            </div>
+        `;
+        updateCompromissosCountBadge();
+        return;
+    }
+
+    items.forEach(c => {
+        const dateParts = c.data ? c.data.split('-') : ['2026', '01', '01'];
+        const dateFormatted = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+
+        const card = document.createElement('div');
+        card.className = `compromisso-item-card ${c.concluido ? 'concluido' : ''}`;
+
+        card.innerHTML = `
+            <div class="comp-header">
+                <span class="comp-date-badge">
+                    <i class="fa-regular fa-calendar"></i> ${dateFormatted} ${c.hora ? '&bull; ' + c.hora : ''}
+                </span>
+                ${getCategoryBadgeHtml(c.categoria)}
+            </div>
+            <div class="comp-title">${c.titulo}</div>
+            ${c.local ? `<div class="comp-details"><i class="fa-solid fa-location-dot text-muted"></i> ${c.local}</div>` : ''}
+            ${c.observacao ? `<div class="comp-details text-muted"><i class="fa-regular fa-note-sticky"></i> ${c.observacao}</div>` : ''}
+
+            <div class="comp-actions">
+                <label class="checkbox-label" style="font-size: 0.78rem; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                    <input type="checkbox" ${c.concluido ? 'checked' : ''} onchange="toggleCompromissoConcluido('${c.id}')">
+                    <span>${c.concluido ? 'Concluído' : 'Marcar como concluído'}</span>
+                </label>
+                <div class="flex-center gap-1">
+                    <button type="button" class="btn-text btn-sm" onclick="openModalCompromisso('${c.id}')">
+                        <i class="fa-solid fa-pen-to-square"></i> Editar
+                    </button>
+                    <button type="button" class="btn-icon-danger" onclick="confirmDeleteCompromisso('${c.id}')" title="Excluir">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+
+        container.appendChild(card);
+    });
+
+    updateCompromissosCountBadge();
+}
+
+function updateCompromissosCountBadge() {
+    const badge = document.getElementById('badgeCompromissosCount');
+    if (badge) {
+        const pendentesCount = appState.compromissos.filter(c => !c.concluido).length;
+        badge.textContent = pendentesCount;
+    }
+}
+
+// Modal Compromisso Logic
+let editingCompromissoId = null;
+
+function openModalCompromisso(id = null, defaultDate = null) {
+    editingCompromissoId = id;
+    const modal = document.getElementById('modalCompromisso');
+    const titleEl = document.getElementById('modalCompromissoTitle');
+    const btnDelete = document.getElementById('btnDeleteCompromisso');
+
+    const inputId = document.getElementById('compromissoId');
+    const inputTitulo = document.getElementById('compromissoTitulo');
+    const inputData = document.getElementById('compromissoData');
+    const inputHora = document.getElementById('compromissoHora');
+    const selectCat = document.getElementById('compromissoCategoria');
+    const inputLocal = document.getElementById('compromissoLocal');
+    const inputObs = document.getElementById('compromissoObservacao');
+    const checkConcluido = document.getElementById('compromissoConcluido');
+
+    if (id) {
+        const item = appState.compromissos.find(c => c.id === id);
+        if (item) {
+            if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-pen-to-square text-primary"></i> Editar Compromisso`;
+            if (btnDelete) btnDelete.classList.remove('hidden');
+
+            if (inputId) inputId.value = item.id;
+            if (inputTitulo) inputTitulo.value = item.titulo || '';
+            if (inputData) inputData.value = item.data || '';
+            if (inputHora) inputHora.value = item.hora || '';
+            if (selectCat) selectCat.value = item.categoria || 'Degustação';
+            if (inputLocal) inputLocal.value = item.local || '';
+            if (inputObs) inputObs.value = item.observacao || '';
+            if (checkConcluido) checkConcluido.checked = !!item.concluido;
+        }
+    } else {
+        if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-calendar-plus text-primary"></i> Novo Compromisso`;
+        if (btnDelete) btnDelete.classList.add('hidden');
+
+        if (inputId) inputId.value = '';
+        if (inputTitulo) inputTitulo.value = '';
+
+        const todayStr = defaultDate || new Date().toISOString().split('T')[0];
+        if (inputData) inputData.value = todayStr;
+        if (inputHora) inputHora.value = '14:00';
+        if (selectCat) selectCat.value = 'Degustação';
+        if (inputLocal) inputLocal.value = '';
+        if (inputObs) inputObs.value = '';
+        if (checkConcluido) checkConcluido.checked = false;
+    }
+
+    if (modal) modal.classList.add('active');
+}
+
+function closeModalCompromisso() {
+    const modal = document.getElementById('modalCompromisso');
+    if (modal) modal.classList.remove('active');
+}
+
+function salvarCompromisso(e) {
+    e.preventDefault();
+    const inputId = document.getElementById('compromissoId').value;
+    const titulo = document.getElementById('compromissoTitulo').value.trim();
+    const data = document.getElementById('compromissoData').value;
+    const hora = document.getElementById('compromissoHora').value;
+    const categoria = document.getElementById('compromissoCategoria').value;
+    const local = document.getElementById('compromissoLocal').value.trim();
+    const observacao = document.getElementById('compromissoObservacao').value.trim();
+    const concluido = document.getElementById('compromissoConcluido').checked;
+
+    if (!titulo || !data) return;
+
+    if (inputId) {
+        const idx = appState.compromissos.findIndex(c => c.id === inputId);
+        if (idx !== -1) {
+            appState.compromissos[idx] = {
+                ...appState.compromissos[idx],
+                titulo, data, hora, categoria, local, observacao, concluido
+            };
+            if (typeof dbSaveCompromisso === 'function') {
+                dbSaveCompromisso(appState.compromissos[idx]);
+            }
+        }
+    } else {
+        const newComp = {
+            id: 'comp_' + Date.now(),
+            titulo, data, hora, categoria, local, observacao, concluido
+        };
+        appState.compromissos.push(newComp);
+        if (typeof dbSaveCompromisso === 'function') {
+            dbSaveCompromisso(newComp);
+        }
+    }
+
+    saveState();
+    closeModalCompromisso();
+    renderCalendar();
+}
+
+function confirmDeleteCompromisso(id = null) {
+    const targetId = id || editingCompromissoId;
+    if (!targetId) return;
+
+    if (confirm('Tem certeza que deseja excluir este compromisso?')) {
+        appState.compromissos = appState.compromissos.filter(c => c.id !== targetId);
+        saveState();
+        if (typeof dbDeleteCompromisso === 'function') {
+            dbDeleteCompromisso(targetId);
+        }
+        closeModalCompromisso();
+        renderCalendar();
+    }
+}
+
+function toggleCompromissoConcluido(id) {
+    const item = appState.compromissos.find(c => c.id === id);
+    if (item) {
+        item.concluido = !item.concluido;
+        saveState();
+        if (typeof dbSaveCompromisso === 'function') {
+            dbSaveCompromisso(item);
+        }
+        renderCalendar();
+    }
+}
+
 // Master Render Function
 function renderAll() {
     populateCategorySelect();
@@ -1534,6 +1916,7 @@ function renderAll() {
     renderRelatorios();
     renderWeddingDateUI();
     updateCountdown();
+    renderCalendar();
 }
 
 /* ==========================================================================
@@ -1598,6 +1981,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateCountdown();
                 } else if (appState.weddingDate) {
                     dbSaveWeddingDate(appState.weddingDate);
+                }
+            },
+            (cloudCompromissos, isEmpty) => {
+                if (isEmpty && appState.compromissos.length > 0) {
+                    appState.compromissos.forEach(c => dbSaveCompromisso(c));
+                } else if (!isEmpty) {
+                    appState.compromissos = cloudCompromissos;
+                    saveState();
+                    renderCalendar();
                 }
             }
         );

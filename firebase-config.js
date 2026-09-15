@@ -102,10 +102,30 @@ async function dbSaveWeddingDate(dateStr) {
     }
 }
 
+// Sync Compromisso to Cloud
+async function dbSaveCompromisso(compromisso) {
+    if (!isFirebaseConnected || !rtdb) return;
+    try {
+        await rtdb.ref('compromissos/' + compromisso.id).set(compromisso);
+    } catch (e) {
+        console.error('Erro ao salvar Compromisso no Realtime Database:', e);
+    }
+}
+
+// Delete Compromisso from Cloud
+async function dbDeleteCompromisso(id) {
+    if (!isFirebaseConnected || !rtdb) return;
+    try {
+        await rtdb.ref('compromissos/' + id).remove();
+    } catch (e) {
+        console.error('Erro ao deletar Compromisso no Realtime Database:', e);
+    }
+}
+
 /* ==========================================================================
    Real-Time Data Listeners
    ========================================================================== */
-function setupRealtimeListeners(onConvidadosChange, onOrcamentosChange, onCategoriesChange, onValorGuardadoChange, onWeddingDateChange) {
+function setupRealtimeListeners(onConvidadosChange, onOrcamentosChange, onCategoriesChange, onValorGuardadoChange, onWeddingDateChange, onCompromissosChange) {
     if (!isFirebaseConnected || !rtdb) return;
 
     // 1. Convidados Real-time listener
@@ -145,5 +165,12 @@ function setupRealtimeListeners(onConvidadosChange, onOrcamentosChange, onCatego
             onWeddingDateChange(val);
         }
     }, err => console.error('Erro listener data do casamento:', err));
+
+    // 6. Compromissos Real-time listener
+    rtdb.ref('compromissos').on('value', (snapshot) => {
+        const val = snapshot.val();
+        const compromissosList = val ? Object.values(val) : [];
+        if (onCompromissosChange) onCompromissosChange(compromissosList, !val);
+    }, err => console.error('Erro listener compromissos:', err));
 }
 
