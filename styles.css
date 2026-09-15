@@ -2381,6 +2381,48 @@ textarea.form-control {
     margin-top: -6px;
 }
 
+/* Delicate Bible Verse Banner */
+.wedding-verse-banner {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(223, 183, 108, 0.28);
+    border-radius: var(--radius-md);
+    padding: 14px 22px;
+    max-width: 640px;
+    margin: 4px auto 6px auto;
+    position: relative;
+    text-align: center;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
+}
+
+.verse-icon-left {
+    font-size: 0.85rem;
+    color: #DFB76C;
+    margin-bottom: 4px;
+    opacity: 0.85;
+}
+
+.verse-body {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #F7E7CE;
+    letter-spacing: 0.2px;
+    margin: 0;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.verse-citation {
+    display: inline-block;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #DFB76C;
+    margin-top: 6px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
 /* Date Selector */
 .wedding-date-config {
     display: inline-flex;
@@ -2567,6 +2609,21 @@ textarea.form-control {
     .hero-subtitle {
         font-size: 0.82rem;
         margin-top: -2px;
+    }
+
+    .wedding-verse-banner {
+        padding: 10px 14px;
+        max-width: 100%;
+        margin: 4px 0;
+    }
+
+    .verse-body {
+        font-size: 0.84rem;
+        line-height: 1.4;
+    }
+
+    .verse-citation {
+        font-size: 0.7rem;
     }
 
     .wedding-date-config {
