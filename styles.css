@@ -1543,30 +1543,39 @@ textarea.form-control {
         flex-direction: column;
     }
 
-    /* Compact 2x2 Grid for Metric KPI Cards on Mobile */
+    /* Responsive Grid for Metric KPI Cards on Mobile */
     .metrics-grid {
         display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 8px !important;
-        margin-bottom: 14px !important;
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+        margin-bottom: 16px !important;
         width: 100% !important;
         box-sizing: border-box;
     }
 
+    @media (min-width: 480px) and (max-width: 768px) {
+        .metrics-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
+        .metrics-grid > .metric-card:last-child:nth-child(odd) {
+            grid-column: 1 / -1 !important;
+        }
+    }
+
     .metric-card {
-        padding: 10px 12px !important;
-        gap: 8px !important;
+        padding: 14px 16px !important;
+        gap: 14px !important;
         align-items: center !important;
-        border-radius: var(--radius-sm) !important;
+        border-radius: var(--radius-md) !important;
         width: 100% !important;
         box-sizing: border-box;
     }
 
     .metric-icon {
-        width: 34px !important;
-        height: 34px !important;
-        font-size: 14px !important;
-        border-radius: 8px !important;
+        width: 42px !important;
+        height: 42px !important;
+        font-size: 18px !important;
+        border-radius: 10px !important;
         flex-shrink: 0;
     }
 
@@ -1576,23 +1585,24 @@ textarea.form-control {
     }
 
     .metric-title {
-        font-size: 0.65rem !important;
-        letter-spacing: 0.2px !important;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        font-size: 0.75rem !important;
+        letter-spacing: 0.4px !important;
+        white-space: normal !important;
+        word-break: break-word;
+        font-weight: 600 !important;
+        line-height: 1.2 !important;
     }
 
     .metric-value {
-        font-size: 1.05rem !important;
-        line-height: 1.1 !important;
+        font-size: 1.25rem !important;
+        line-height: 1.2 !important;
+        word-break: break-word;
     }
 
     .metric-sub {
-        font-size: 0.68rem !important;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        font-size: 0.75rem !important;
+        white-space: normal !important;
+        word-break: break-word;
     }
 
     /* Form Cards & Collapse behaviour */
