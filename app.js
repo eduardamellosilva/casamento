@@ -323,7 +323,8 @@ function switchView(viewId) {
         'dashboardView': 'Visão Geral do Planejamento',
         'convidadosView': '1. Gestão de Convidados & Jantar',
         'orcamentosView': '2. Orçamentos & Propostas',
-        'servicosFechadosView': '3. Serviços & Contratos Fechados'
+        'servicosFechadosView': '3. Serviços & Contratos Fechados',
+        'relatoriosView': '4. Relatórios & Painel Financeiro'
     };
     document.getElementById('pageTitle').textContent = titles[viewId] || 'Planejamento de Casamento';
 
@@ -1332,6 +1333,93 @@ function renderDashboard() {
     }
 }
 
+/* ==========================================================================
+   RELATÓRIOS & PAINEL FINANCEIRO MODULE
+   ========================================================================== */
+function renderRelatorios() {
+    // 1. Payment Flow Breakdown for Approved Contracts
+    const fechados = appState.orcamentos.filter(o => o.aprovado);
+    const totalFechado = fechados.reduce((acc, o) => acc + (o.valor || 0), 0);
+    const totalPago = fechados.reduce((acc, o) => acc + (o.valorPago || 0), 0);
+    const restantePagar = Math.max(0, totalFechado - totalPago);
+    const percentualPago = totalFechado > 0 ? Math.round((totalPago / totalFechado) * 100) : 0;
+
+    const elTotalFechado = document.getElementById('relatorioTotalFechado');
+    if (elTotalFechado) elTotalFechado.textContent = formatCurrency(totalFechado);
+    const elTotalPago = document.getElementById('relatorioTotalPago');
+    if (elTotalPago) elTotalPago.textContent = formatCurrency(totalPago);
+    const elRestantePagar = document.getElementById('relatorioRestantePagar');
+    if (elRestantePagar) elRestantePagar.textContent = formatCurrency(restantePagar);
+    const elPercentualPago = document.getElementById('relatorioPercentualPago');
+    if (elPercentualPago) elPercentualPago.textContent = `${percentualPago}%`;
+    const elProgressBarFill = document.getElementById('relatorioProgressBarFill');
+    if (elProgressBarFill) elProgressBarFill.style.width = `${percentualPago}%`;
+
+    // 2. Guest & Dinner Summary
+    const countNoiva = appState.convidados.filter(c => c.origem === 'Noiva').length;
+    const countNoivo = appState.convidados.filter(c => c.origem === 'Noivo').length;
+    const totalJantarNoiva = appState.convidados.filter(c => c.origem === 'Noiva').reduce((acc, c) => acc + c.precoJantar, 0);
+    const totalJantarNoivo = appState.convidados.filter(c => c.origem === 'Noivo').reduce((acc, c) => acc + c.precoJantar, 0);
+    const totalJantar = totalJantarNoiva + totalJantarNoivo;
+    const totalConvidadosCount = appState.convidados.length;
+    const mediaPorConvidado = totalConvidadosCount > 0 ? (totalJantar / totalConvidadosCount) : 0;
+
+    const elNoivaCount = document.getElementById('relatorioConvidadosNoiva');
+    if (elNoivaCount) elNoivaCount.textContent = `${countNoiva} convidados`;
+    const elNoivaJantar = document.getElementById('relatorioJantarNoiva');
+    if (elNoivaJantar) elNoivaJantar.textContent = `Jantar: ${formatCurrency(totalJantarNoiva)}`;
+
+    const elNoivoCount = document.getElementById('relatorioConvidadosNoivo');
+    if (elNoivoCount) elNoivoCount.textContent = `${countNoivo} convidados`;
+    const elNoivoJantar = document.getElementById('relatorioJantarNoivo');
+    if (elNoivoJantar) elNoivoJantar.textContent = `Jantar: ${formatCurrency(totalJantarNoivo)}`;
+
+    const elCustoTotalJantar = document.getElementById('relatorioCustoTotalJantar');
+    if (elCustoTotalJantar) elCustoTotalJantar.textContent = formatCurrency(totalJantar);
+    const elMediaPorConvidado = document.getElementById('relatorioMediaPorConvidado');
+    if (elMediaPorConvidado) elMediaPorConvidado.textContent = `Média: ${formatCurrency(mediaPorConvidado)} / pessoa`;
+
+    // 3. Category Breakdown Table
+    const tbody = document.getElementById('tbodyRelatorioCategorias');
+    const badgeCategorias = document.getElementById('relatorioCategoriasCount');
+    if (badgeCategorias) badgeCategorias.textContent = `${appState.categories.length} categorias`;
+
+    if (tbody) {
+        tbody.innerHTML = '';
+        appState.categories.forEach(cat => {
+            const orcs = appState.orcamentos.filter(o => o.servico === cat);
+            const propostasCount = orcs.length;
+            const contratadoItem = orcs.find(o => o.aprovado);
+
+            const valorAprovado = contratadoItem ? contratadoItem.valor : 0;
+            const valorPago = contratadoItem ? (contratadoItem.valorPago || 0) : 0;
+            const valorRestante = Math.max(0, valorAprovado - valorPago);
+
+            let statusBadge = '<span class="badge badge-warning">Em cotação</span>';
+            if (contratadoItem) {
+                if (valorPago >= valorAprovado) {
+                    statusBadge = '<span class="badge badge-success"><i class="fa-solid fa-check-double"></i> Quitado</span>';
+                } else {
+                    statusBadge = '<span class="badge badge-info"><i class="fa-solid fa-file-contract"></i> Fechado</span>';
+                }
+            } else if (propostasCount === 0) {
+                statusBadge = '<span class="badge badge-neutral">Sem propostas</span>';
+            }
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${cat}</strong></td>
+                <td class="text-center">${propostasCount} ${propostasCount === 1 ? 'proposta' : 'propostas'}</td>
+                <td class="text-center">${statusBadge}</td>
+                <td class="text-right ${valorAprovado > 0 ? 'text-primary font-bold' : 'text-muted'}">${valorAprovado > 0 ? formatCurrency(valorAprovado) : '-'}</td>
+                <td class="text-right ${valorPago > 0 ? 'text-success' : 'text-muted'}">${valorPago > 0 ? formatCurrency(valorPago) : '-'}</td>
+                <td class="text-right ${valorRestante > 0 ? 'text-danger' : 'text-muted'}">${valorRestante > 0 ? formatCurrency(valorRestante) : (valorAprovado > 0 ? 'Quitado' : '-')}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+}
+
 // Master Render Function
 function renderAll() {
     populateCategorySelect();
@@ -1339,6 +1427,7 @@ function renderAll() {
     renderOrcamentosTable();
     renderFechadosTable();
     renderDashboard();
+    renderRelatorios();
 }
 
 /* ==========================================================================

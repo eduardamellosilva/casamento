@@ -2186,4 +2186,110 @@ textarea.form-control {
     border-top: 1px solid var(--neutral-200);
 }
 
+/* ==========================================================================
+   Relatórios & Painel Financeiro Custom Styles
+   ========================================================================== */
+.h-100 {
+    height: 100%;
+}
+
+.font-bold {
+    font-weight: 700 !important;
+}
+
+.payment-flow-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.flow-stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: var(--neutral-100);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--neutral-200);
+}
+
+.flow-stat-item .stat-label {
+    font-size: 0.85rem;
+    color: var(--neutral-600);
+    font-weight: 500;
+}
+
+.flow-stat-item .stat-val {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.card-progress-bar.lg {
+    height: 14px;
+}
+
+.card-progress-fill.success {
+    background: linear-gradient(90deg, #2E7D32 0%, #4CAF50 100%);
+}
+
+.guest-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.guest-summary-box {
+    background: var(--neutral-100);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.guest-summary-box.span-2 {
+    grid-column: span 2;
+    background: linear-gradient(135deg, var(--primary-bg) 0%, #ffffff 100%);
+    border-color: var(--primary-light);
+}
+
+.guest-summary-box .box-label {
+    font-size: 0.78rem;
+    color: var(--neutral-600);
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.guest-summary-box .box-val {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--neutral-900);
+}
+
+.guest-summary-box small {
+    font-size: 0.75rem;
+    color: var(--neutral-500);
+    margin-top: 2px;
+}
+
+.badge-info {
+    background-color: #E0F2FE;
+    color: #0369A1;
+}
+
+.badge-neutral {
+    background-color: var(--neutral-200);
+    color: var(--neutral-700);
+}
+
+@media (max-width: 768px) {
+    .guest-summary-grid {
+        grid-template-columns: 1fr;
+    }
+    .guest-summary-box.span-2 {
+        grid-column: span 1;
+    }
+}
+
+
 

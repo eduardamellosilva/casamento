@@ -69,6 +69,12 @@
                             <span class="badge badge-success" id="badgeFechadosCount">0</span>
                         </button>
                     </li>
+                    <li>
+                        <button class="nav-link" data-view="relatoriosView">
+                            <i class="fa-solid fa-chart-column"></i>
+                            <span>4. Relatórios</span>
+                        </button>
+                    </li>
                 </ul>
             </nav>
 
@@ -124,6 +130,9 @@
                             <button class="btn-accent" onclick="switchView('orcamentosView')">
                                 <i class="fa-solid fa-plus"></i> Novo Orçamento
                             </button>
+                            <button class="btn-secondary" onclick="switchView('relatoriosView')">
+                                <i class="fa-solid fa-chart-column"></i> Ver Relatórios
+                            </button>
                         </div>
                     </div>
 
@@ -147,54 +156,6 @@
                                 <button type="button" class="btn-primary" id="btnSalvarValorGuardado" onclick="salvarValorGuardado()">
                                     <i class="fa-solid fa-floppy-disk"></i> Salvar Valor Guardado
                                 </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Metrics Grid -->
-                    <div class="metrics-grid">
-                        <div class="metric-card purple">
-                            <div class="metric-icon"><i class="fa-solid fa-users"></i></div>
-                            <div class="metric-data">
-                                <span class="metric-title">Total de Convidados</span>
-                                <h3 class="metric-value" id="dashTotalConvidados">0 pessoas</h3>
-                                <span class="metric-sub" id="dashConvidadosBreakdown">Noiva: 0 | Noivo: 0</span>
-                            </div>
-                        </div>
-
-                        <div class="metric-card amber">
-                            <div class="metric-icon"><i class="fa-solid fa-calculator"></i></div>
-                            <div class="metric-data">
-                                <span class="metric-title">Orçamentos em Análise</span>
-                                <h3 class="metric-value" id="dashTotalOrcamentosPendentes">R$ 0,000</h3>
-                                <span class="metric-sub" id="dashOrcamentosCountSub">0 propostas cadastradas</span>
-                            </div>
-                        </div>
-
-                        <div class="metric-card emerald">
-                            <div class="metric-icon"><i class="fa-solid fa-file-signature"></i></div>
-                            <div class="metric-data">
-                                <span class="metric-title">Contratos Fechados</span>
-                                <h3 class="metric-value" id="dashTotalFechado">R$ 0,000</h3>
-                                <span class="metric-sub" id="dashFechadosCountSub">0 serviços aprovados</span>
-                            </div>
-                        </div>
-
-                        <div class="metric-card teal">
-                            <div class="metric-icon"><i class="fa-solid fa-piggy-bank"></i></div>
-                            <div class="metric-data">
-                                <span class="metric-title">Valor Guardado</span>
-                                <h3 class="metric-value" id="dashValorGuardado">R$ 0,000</h3>
-                                <span class="metric-sub">Reserva total de fundos</span>
-                            </div>
-                        </div>
-
-                        <div class="metric-card indigo" id="cardDashSaldoDisponivel">
-                            <div class="metric-icon"><i class="fa-solid fa-scale-balanced"></i></div>
-                            <div class="metric-data">
-                                <span class="metric-title">Saldo Restante Disponível</span>
-                                <h3 class="metric-value" id="dashSaldoDisponivel">R$ 0,000</h3>
-                                <span class="metric-sub" id="dashSaldoSub">Valor Guardado - Contratos Fechados</span>
                             </div>
                         </div>
                     </div>
@@ -634,6 +595,156 @@
                                     <!-- Rendered via JS -->
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: RELATÓRIOS & PAINEL FINANCEIRO -->
+                <section class="view-section" id="relatoriosView">
+                    <div class="view-top-actions mb-4 flex-between flex-wrap gap-2">
+                        <div>
+                            <h2 class="view-main-title"><i class="fa-solid fa-chart-column text-primary"></i> Relatórios & Painel Financeiro</h2>
+                            <p class="text-muted">Acompanhe métricas consolidadas, progresso de pagamentos e análise por categoria de serviços.</p>
+                        </div>
+                    </div>
+
+                    <!-- Main Metrics Grid -->
+                    <div class="metrics-grid mb-4">
+                        <div class="metric-card purple">
+                            <div class="metric-icon"><i class="fa-solid fa-users"></i></div>
+                            <div class="metric-data">
+                                <span class="metric-title">Total de Convidados</span>
+                                <h3 class="metric-value" id="dashTotalConvidados">0 pessoas</h3>
+                                <span class="metric-sub" id="dashConvidadosBreakdown">Noiva: 0 | Noivo: 0</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card amber">
+                            <div class="metric-icon"><i class="fa-solid fa-calculator"></i></div>
+                            <div class="metric-data">
+                                <span class="metric-title">Orçamentos em Análise</span>
+                                <h3 class="metric-value" id="dashTotalOrcamentosPendentes">R$ 0,000</h3>
+                                <span class="metric-sub" id="dashOrcamentosCountSub">0 propostas cadastradas</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card emerald">
+                            <div class="metric-icon"><i class="fa-solid fa-file-signature"></i></div>
+                            <div class="metric-data">
+                                <span class="metric-title">Contratos Fechados</span>
+                                <h3 class="metric-value" id="dashTotalFechado">R$ 0,000</h3>
+                                <span class="metric-sub" id="dashFechadosCountSub">0 serviços aprovados</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card teal">
+                            <div class="metric-icon"><i class="fa-solid fa-piggy-bank"></i></div>
+                            <div class="metric-data">
+                                <span class="metric-title">Valor Guardado</span>
+                                <h3 class="metric-value" id="dashValorGuardado">R$ 0,000</h3>
+                                <span class="metric-sub">Reserva total de fundos</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card indigo" id="cardDashSaldoDisponivel">
+                            <div class="metric-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+                            <div class="metric-data">
+                                <span class="metric-title">Saldo Restante Disponível</span>
+                                <h3 class="metric-value" id="dashSaldoDisponivel">R$ 0,000</h3>
+                                <span class="metric-sub" id="dashSaldoSub">Valor Guardado - Contratos Fechados</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flow of Payments & Category Analysis Grid -->
+                    <div class="dashboard-columns mb-4">
+                        <!-- Progress & Payment Breakdown Card -->
+                        <div class="dash-column">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h3><i class="fa-solid fa-hand-holding-dollar text-success"></i> Fluxo de Pagamentos dos Contratos</h3>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="payment-flow-stats">
+                                        <div class="flow-stat-item">
+                                            <span class="stat-label">Total Fechado Contratado</span>
+                                            <strong class="stat-val text-primary" id="relatorioTotalFechado">R$ 0,000</strong>
+                                        </div>
+                                        <div class="flow-stat-item">
+                                            <span class="stat-label">Total Já Pago (Entradas / Parcelas)</span>
+                                            <strong class="stat-val text-success" id="relatorioTotalPago">R$ 0,000</strong>
+                                        </div>
+                                        <div class="flow-stat-item">
+                                            <span class="stat-label">Restante a Pagar</span>
+                                            <strong class="stat-val text-danger" id="relatorioRestantePagar">R$ 0,000</strong>
+                                        </div>
+                                    </div>
+                                    <div class="progress-container mt-4">
+                                        <div class="flex-between mb-1">
+                                            <span class="text-muted font-bold">Progresso de Quitação:</span>
+                                            <strong id="relatorioPercentualPago">0%</strong>
+                                        </div>
+                                        <div class="card-progress-bar lg">
+                                            <div class="card-progress-fill success" id="relatorioProgressBarFill" style="width: 0%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Guest & Dinner Summary Card -->
+                        <div class="dash-column">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h3><i class="fa-solid fa-utensils text-primary"></i> Resumo de Convidados & Custo do Jantar</h3>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="guest-summary-grid">
+                                        <div class="guest-summary-box">
+                                            <span class="box-label">Lista da Noiva</span>
+                                            <strong class="box-val" id="relatorioConvidadosNoiva">0 convidados</strong>
+                                            <small id="relatorioJantarNoiva">Jantar: R$ 0,000</small>
+                                        </div>
+                                        <div class="guest-summary-box">
+                                            <span class="box-label">Lista do Noivo</span>
+                                            <strong class="box-val" id="relatorioConvidadosNoivo">0 convidados</strong>
+                                            <small id="relatorioJantarNoivo">Jantar: R$ 0,000</small>
+                                        </div>
+                                        <div class="guest-summary-box span-2">
+                                            <span class="box-label">Custo Total Previsto do Jantar</span>
+                                            <strong class="box-val text-success" id="relatorioCustoTotalJantar">R$ 0,000</strong>
+                                            <small id="relatorioMediaPorConvidado">Média: R$ 0,000 / pessoa</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category Breakdown Table -->
+                    <div class="card mb-4">
+                        <div class="card-header flex-between">
+                            <h3><i class="fa-solid fa-layer-group text-primary"></i> Relatório de Gastos por Categoria</h3>
+                            <span class="badge badge-info" id="relatorioCategoriasCount">0 categorias</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table" id="tableRelatorioCategorias">
+                                    <thead>
+                                        <tr>
+                                            <th>Categoria</th>
+                                            <th class="text-center">Propostas</th>
+                                            <th class="text-center">Status</th>
+                                            <th class="text-right">Valor Aprovado/Fechado</th>
+                                            <th class="text-right">Já Pago</th>
+                                            <th class="text-right">A Pagar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyRelatorioCategorias">
+                                        <!-- Dynamic items -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </section>
